@@ -34,6 +34,7 @@ $view = tracker_resolve_view($tracker, $cm);
 
 // Security.
 $context = context_module::instance($cm->id);
+require_login($course, false, $cm);
 require_course_login($course->id, false, $cm);
 require_capability('mod/tracker:report', $context);
 

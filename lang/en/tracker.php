@@ -260,7 +260,7 @@ $string['issuenumber'] = 'Ticket';
 $string['issues'] = 'ticket records';
 $string['issuestoassign'] = 'Tickets to assign: {$a}';
 $string['issuestowatch'] = 'Tickets to watch: {$a}';
-$string['issueupdated'] = '[{$a->tracker}:{$a->issueid}] Ticket updated. State : {$a->state}';
+$string['issueupdated'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has been updated. State : {$a->state}';
 $string['knownelements'] = 'Known tracker form elements';
 $string['lastcomment'] = 'Last comment: ';
 $string['listissues'] = 'List view';
@@ -407,10 +407,10 @@ $string['statehistory'] = 'States';
 $string['stateprofile'] = 'Ticket states';
 $string['status'] = 'Status';
 $string['strictworkflow'] = 'Strict workflow';
-$string['changedownership'] = '[{$a->tracker}:{$a->issueid}]  A ticket has been reassigned ';
-$string['commented'] = '[{$a->tracker}:{$a->issueid}] A ticket has been commented ';
-$string['moved'] = '[{$a->tracker}:{$a->issueid}] Ticket has been moved';
-$string['submission'] = '[{$a->tracker}:{$a->issueid}] A new ticket has been reported';
+$string['changedownership'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has been reassigned.';
+$string['commented'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has been commented.';
+$string['moved'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has been moved.';
+$string['submission'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has been newly reported.';
 $string['submitissue'] = 'Submit the ticket';
 $string['submitoption'] = 'Add option';
 $string['subtrackers'] = 'Subtrackers';
@@ -431,7 +431,7 @@ $string['tracker-levelaccess'] = 'My capabilities in this tracker';
 $string['tracker_name'] = 'Tracker module services';
 $string['tracker_service_name'] = 'Tracker module services';
 $string['trackerelements'] = 'Tracker\'s definition';
-$string['trackereventchanged'] = '[{$a->tracker}:{$a->issueid}] Issue state change to {$a->event}';
+$string['trackereventchanged'] = '[N2NCU Online Help Desk] Ticket {$a->issueid} has a state change to {$a->event}.';
 $string['trackerhost'] = 'Parent host for tracker';
 $string['trackername'] = 'Tracker name';
 $string['transfer'] = 'Transfered';
@@ -612,9 +612,7 @@ Tracker : <%%TRACKERNAME%%>
 ------------------------------------------
 <%%COMMENT%%>
 ------------------------------------------
-See the ticket : <%%ISSUEURL%%>
-Unregister from ticket : <%%UNCCURL%%>
-Unregister from all tickets in this tracker : <%%ALLUNCCURL%%>';
+URL: <%%ISSUEURL%%>';
 
 $string['addcomment_html_tpl'] = '
 <b>Cours :</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%><br/>
@@ -625,9 +623,7 @@ $string['addcomment_html_tpl'] = '
 <hr/>
 <p><%%COMMENT%%></p>
 <hr/>
-<p><a href="<%%ISSUEURL%%>">See the ticket</a><br/>
-<a href="<%%UNCCURL%%>">Unregister from this ticket</a><br/>
-<a href="<%%ALLUNCCURL%%>">Unregister from this tracker</a></p>';
+<p><b>URL: </b> <a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 $string['issuemoved_tpl'] = '
 The following ticket:
@@ -649,10 +645,7 @@ Assignee is now:
 has been reassigned to: <%%ASSIGNEDTO%%>
 
 -------------------------------------
-URL for viewing the issue: <%%ISSUEURL%%>
-URL for unregistering from watches on this issue: <%%UNCCURL%%>
-URL for unregistering from all watches on this tracker: <%%ALLUNCCURL%%>
-';
+URL: <%%ISSUEURL%%>';
 
 $string['issuemoved_html_tpl'] = '
 <p>The following ticket:</p>
@@ -674,10 +667,7 @@ Tracker: <b><%%NEWTRACKERNAME%%></b></p>
 <p>has been reassigned to: <b><%%ASSIGNEDTO%%></b></p>
 
 <hr>
-<p><a href="<%%ISSUEURL%%>">View the issue</a><br>
-<a href="<%%UNCCURL%%>">Unregister from watches on this issue</a><br/>
-<a href="<%%ALLUNCCURL%%>">Unregister from all watches on this tracker</a>
-</p>
+<p><b>URL: </b> <a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>
 ';
 
 $string['ownershipchanged_tpl'] = '
@@ -688,10 +678,7 @@ Ticket: <%%ISSUE%%> / <%%SUMMARY%%>
 has been reassigned to: <%%ASSIGNEDTO%%>
 By: <%%BY%%>
 
-URL for viewing the issue: <%%ISSUEURL%%>
-URL for unregistering from watches on this issue: <%%UNCCURL%%>
-URL for unregistering from all watches on this tracker: <%%ALLUNCCURL%%>
-';
+URL: <%%ISSUEURL%%>';
 
 $string['ownershipchanged_html_tpl'] = '
 <b>Course:</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%><br />
@@ -701,10 +688,7 @@ $string['ownershipchanged_html_tpl'] = '
 <b>has been reassigned to:</b> <%%ASSIGNEDTO%%> <br />
 <b>By:</b> <%%BY%%></p>
 <hr/>
-<p><a href="<%%ISSUEURL%%>">View the issue record</a><br/>
-<a href="<%%UNCCURL%%>">Unregister watches from this issue</a><br/>
-<a href="<%%ALLUNCCURL%%>">Unregister from all watches on this tracker</a></p>
-';
+<p><b>URL: </b><a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 $string['raiserequest_tpl'] = '
 Course: [<%%COURSE_SHORT%%>] <%%COURSENAME%%>
@@ -723,7 +707,7 @@ Given reason is:
 ------------------------------------------
 <%%URGENT%%>
 ------------------------------------------
-See the ticket there: <%%ISSUEURL%%>
+URL: <%%ISSUEURL%%>
 ';
 
 $string['raiserequest_html_tpl'] = '
@@ -741,7 +725,7 @@ $string['raiserequest_html_tpl'] = '
 <hr/>
 <%%URGENT%%>
 <hr/>
-<p><a href="<%%ISSUEURL%%>">See the ticket</a><br/></p>
+<p><b>URL: </b> <a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>
 ';
 
 $string['statechanged_tpl'] = '
@@ -752,10 +736,7 @@ Ticket entry: <%%ISSUE%%> / <%%SUMMARY%%>
 status was changed to <%%EVENT%%>
 By: <%%BY%%>
 
-URL for viewing the issue: <%%ISSUEURL%%>
-URL for unregistering from watches on this issue: <%%UNCCURL%%>
-URL for unregistering from all watches on this tracker: <%%ALLUNCCURL%%>
-';
+URL: <%%ISSUEURL%%>';
 
 $string['statechanged_html_tpl'] = '
 <p><b>Course:</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%>
@@ -765,10 +746,7 @@ $string['statechanged_html_tpl'] = '
 <b>status was changed to</b> <%%EVENT%%><br/>
 <b>By:</b> <%%BY%%></p>
 <hr/>
-<p><a href="<%%ISSUEURL%%>">View this issue record</a><br/>
-<a href="<%%UNCCURL%%>">Unregister from watches on this issue</a><br/>
-<a href="<%%ALLUNCCURL%%>">Unregister from all watches on this tracker</a></p>
-';
+<p><b>URL: </b> <a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 $string['submission_tpl'] = '
 Course: [<%%COURSE_SHORT%%>] <%%COURSENAME%%>
@@ -778,35 +756,25 @@ New ticket entry: <%%ISSUE%%> / <%%SUMMARY%%>
 By: <%%BY%%>
 
 Description : <%%DESCRIPTION%%>
-
-URL for viewing the issue: <%%ISSUEURL%%>
-URL for registering for watches: <%%CCURL%%>
-';
+URL: <%%ISSUEURL%%>';
 
 $string['submission_html_tpl'] = '
-<b>Course:</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%><br/>
-<b>Tracker:</b> <%%TRACKERNAME%%><br/>
+<p><b>Course:</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%><br/>
+<b>Tracker:</b> <%%TRACKERNAME%%></p>
 <hr/>
-<p><b>New bug entry:</b> <%%ISSUE%%> / <%%SUMMARY%%><br/>
+<p><b>New ticket entry:</b> <%%ISSUE%%> / <%%SUMMARY%%><br/>
 <b>By:</b> <%%BY%%></p>
 <hr/>
-<b>Description : </b><%%DESCRIPTION%%>
-<hr/>
-<p><a href="<%%ISSUEURL%%>">See the issue record</a><br/>
-<a href="<%%CCURL%%>">Register for watches on this record</a></p>
-';
+<p><b>Description: </b><%%DESCRIPTION%%></p>
+<p><b>URL: </b><br/><a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 $string['update_tpl'] = '
 Course: [<%%COURSE_SHORT%%>] <%%COURSENAME%%>
 Tracker: <%%TRACKERNAME%%>
 --------------------------------------
-Ticket entry: <%%ISSUE%%> / <%%SUMMARY%%>
+Updated ticket: <%%ISSUE%%> / <%%SUMMARY%%>
 By: <%%BY%%>
-Has been updated.
-
-URL for viewing the issue: <%%ISSUEURL%%>
-URL for registering for watches: <%%CCURL%%>
-';
+URL: <%%ISSUEURL%%>';
 
 $string['update_html_tpl'] = '
 <b>Course:</b> [<%%COURSE_SHORT%%>] <%%COURSENAME%%><br/>
@@ -814,13 +782,10 @@ $string['update_html_tpl'] = '
 <hr/>
 --------------------------------------
 <p><b>Ticket entry:</b> <%%ISSUE%%> / <%%SUMMARY%%><br/>
-<b>By:</b> <%%BY%%><br/>
+<b>By:</b> <%%BY%%><br/></p>
 
-<p><b>Has been updated.</b></p>
+<p><b>Ticket has been updated.</b></p>
 
-<hr/>
-<p><a href="<%%ISSUEURL%%>">See the issue record</a><br/>
-<a href="<%%CCURL%%>">Register for watches on this record</a></p>
-';
+<p><b>See the ticket solution: </b><a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 require(__DIR__.'/pro_additional_strings.php');

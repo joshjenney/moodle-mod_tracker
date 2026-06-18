@@ -49,7 +49,7 @@ $url = new moodle_url('/mod/tracker/view.php', $params);
 
 // Redirect (before outputting) traps.
 if ($view == "view" && (empty($screen) || $screen == 'viewanissue' || $screen == 'editanissue') && empty($issueid)) {
-    redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'browse')));
+      redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'mytickets'))); // browse
 }
 if ($view == 'reportanissue') {
     redirect(new moodle_url('/mod/tracker/reportissue.php', array('id' => $id)));
@@ -65,7 +65,7 @@ if ($issueid) {
 }
 
 // Security.
-
+require_login($course, false, $cm);
 require_course_login($course->id, true, $cm);
 
 $context = context_module::instance($cm->id);
@@ -192,7 +192,8 @@ if ($view == 'view') {
 
             case 'browse': {
                 if (!has_capability('mod/tracker:viewallissues', $context)) {
-                    print_error ('errornoaccessallissues', 'tracker');
+                    // print_error ('errornoaccessallissues', 'tracker');
+                    redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'mytickets')));
                 } else {
                     $resolved = 0;
                     include($CFG->dirroot.'/mod/tracker/views/viewissuelist.php');
@@ -242,7 +243,8 @@ if ($view == 'view') {
 
             case 'browse':
                 if (!has_capability('mod/tracker:viewallissues', $context)) {
-                    print_error('errornoaccessallissues', 'tracker');
+                    // print_error('errornoaccessallissues', 'tracker');
+                    redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'mytickets')));
                 } else {
                     $resolved = 1;
                     include($CFG->dirroot.'/mod/tracker/views/viewissuelist.php');

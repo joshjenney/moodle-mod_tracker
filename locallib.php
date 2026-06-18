@@ -87,7 +87,7 @@ function tracker_get_controller($view, $tracker, $cm, $url = '') {
         $class = '\\mod_tracker\\'.$view.'_controller_extended';
         return new $class($tracker, $cm, $url);
     } else {
-        include($CFG->dirroot.'/mod/tracker/views/'.$view.'.controller.php');
+        include($CFG->dirroot.'/mod/tracker/pro/views/'.$view.'.controller.php');
         $class = '\\mod_tracker\\'.$view.'_controller';
         return new $class($tracker, $cm, $url);
     }
@@ -1155,8 +1155,10 @@ function tracker_notify_submission($issue, &$cm, $tracker = null) {
     }
 
 	// M4
-    $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    // N2NCU custom patch needed here
+    // $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
+    // $fields = 'u.id,'.implode(',', $fields);
+    $field = null;
 
     $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
@@ -2445,7 +2447,9 @@ function tracker_resolve_screen(&$tracker, &$cm, $getdefault = false) {
     }
 
     if ($tracker->supportmode == 'ticketting' && $screen == 'browse') {
-        $screen = 'mytickets';
+	// N2NCU PATCH
+        // $screen = 'mytickets';
+        $screen = 'browse';
         $SESSION->tracker_current_screen = $screen;
         return $screen;
     }
