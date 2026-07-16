@@ -23,7 +23,6 @@
  */
 namespace mod_tracker;
 
-use html_writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,9 +32,9 @@ class textareaelement extends textelement {
 
     public function edit($issueid = 0) {
         $this->get_value($issueid);
-        echo html_writer::start_tag('textarea', array('name' => 'element'.$this->name, 'cols' => 80, 'rows' => 15));
+        echo \html_writer::start_tag('textarea', array('name' => 'element'.$this->name, 'cols' => 80, 'rows' => 15));
         echo format_string($this->value);
-        echo html_writer::end_tag('textarea');
+        echo \html_writer::end_tag('textarea');
     }
 
     public function view_search() {

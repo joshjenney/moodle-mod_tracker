@@ -23,8 +23,6 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use html_writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -63,10 +61,10 @@ class radioelement extends trackerelement {
             foreach ($optbynames as $name => $option) {
                 if ($this->value == $name) {
                     $attrs = array('type' => 'radio', 'name' => 'element'.$this->name, 'value' => $name, 'checked' => 'checked');
-                    echo html_writer::empty_tag('input', $attrs);
+                    echo \html_writer::empty_tag('input', $attrs);
                 } else {
                     $attrs = array('type' => 'radio', 'name' => 'element'.$this->name, 'value' => $name);
-                    echo html_writer::empty_tag('input', $attrs);
+                    echo \html_writer::empty_tag('input', $attrs);
                 }
                 echo format_string($option);
                 echo $this->options_sep();
@@ -75,7 +73,7 @@ class radioelement extends trackerelement {
     }
 
     public function options_sep() {
-        return html_writer::empty_tag('br');
+        return \html_writer::empty_tag('br');
     }
 
     public function add_form_element(&$mform) {
@@ -115,7 +113,7 @@ class radioelement extends trackerelement {
 
         $params = array('elementid' => $this->id, 'trackerid' => $data->trackerid, 'issueid' => $data->issueid);
         if (!$attribute = $DB->get_record('tracker_issueattribute', $params)) {
-            $attribute = new StdClass();
+            $attribute = new \StdClass();
             $attribute->trackerid = $data->trackerid;
             $attribute->issueid = $data->issueid;
             $attribute->elementid = $this->id;

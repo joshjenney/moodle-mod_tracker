@@ -23,9 +23,6 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use html_writer;
-use file_picker;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -60,9 +57,9 @@ class fileelement extends trackerelement {
             $imagefiles = $fs->get_area_files($this->context->id, 'mod_tracker', 'issueattribute', $attribute->id);
 
             if (empty($imagefiles)) {
-                $html = html_writer::start_tag('span', array('class' => 'tracker-file-item-notice'));
+                $html = \html_writer::start_tag('span', array('class' => 'tracker-file-item-notice'));
                 $html .= get_string('nofileloaded', 'tracker');
-                $html .= html_writer::end_tag('span');
+                $html .= \html_writer::end_tag('span');
                 return $html;
             }
 
@@ -76,12 +73,12 @@ class fileelement extends trackerelement {
             if (preg_match("/\.(jpg|gif|png|jpeg)$/i", $filename)) {
                 return "<img style=\"max-width:600px\" src=\"{$fileurl}\" class=\"tracker_image_attachment\" />";
             } else {
-                return html_writer::link($fileurl, $filename);
+                return \html_writer::link($fileurl, $filename);
             }
         } else {
-            $html = html_writer::start_tag('span', array('class' => 'tracker-file-item-notice'));
+            $html = \html_writer::start_tag('span', array('class' => 'tracker-file-item-notice'));
             $html .= get_string('nofileloaded', 'tracker');
-            $html .= html_writer::end_tag('span');
+            $html .= \html_writer::end_tag('span');
             return $html;
         }
     }
@@ -106,14 +103,14 @@ class fileelement extends trackerelement {
         file_prepare_draft_area($draftitemid, $this->context->id, 'mod_tracker', 'issueattribute',
                                 $itemid, $this->filemanageroptions);
 
-        $options = new StdClass();
+        $options = new \StdClass();
         $options->accepted_types = $this->filemanageroptions['accepted_types'];
         $options->itemid = $draftitemid;
         $options->maxbytes = $this->filemanageroptions['maxbytes'];
         $options->maxfiles = $this->filemanageroptions['maxfiles'];
         $options->elementname = 'element'.$this->name;
 
-        $fp = new file_picker($options);
+        $fp = new \file_picker($options);
 
         $html = $OUTPUT->render($fp);
         $html .= '<input type="hidden"
@@ -185,7 +182,7 @@ class fileelement extends trackerelement {
 
         $params = array('elementid' => $this->id, 'trackerid' => $data->trackerid, 'issueid' => $data->issueid);
         if (!$attribute = $DB->get_record('tracker_issueattribute', $params)) {
-            $attribute = new StdClass();
+            $attribute = new \StdClass();
             $attribute->trackerid = $data->trackerid;
             $attribute->issueid = $data->issueid;
             $attribute->elementid = $this->id;

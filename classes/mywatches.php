@@ -53,13 +53,13 @@ if (empty($mywatches)) {
                         'what' => 'unregister',
                         'issueid' => $awatch->issueid,
                         'ccid' => $awatch->userid);
-        $unregisterurl = new moodle_url('/mod.tracker/view.php', $params);
+        $unregisterurl = new \moodle_url('/mod.tracker/view.php', $params);
         $alt = get_string('delete');
         $pix = $OUTPUT->pix_icon('t/delete', $alt, 'core');
         $actions = '<a href="'.$unregisterurl.'" title="'.$alt.'">'.$pix.'</a>';
 
         $params = array('id' => $cm->id, 'view' => 'profile', 'what' => 'editwatch', 'ccid' => $awatch->userid);
-        $updateurl = new moodle_url('/mod/tracker/view.php', $params);
+        $updateurl = new \moodle_url('/mod/tracker/view.php', $params);
         $alt = get_string('update');
         $pix = $OUTPUT->pix_icon('t/edit', $alt, 'core');
         $actions .= '&nbsp;<a href="'.$updateurl.'" title="'.$alt.'">'.$pix.'</a>';
@@ -94,12 +94,12 @@ if (empty($mywatches)) {
         }
 
         $params = array('id' => $cm->id, 'view' => 'view', 'screen' => 'viewanissue', 'issueid' => $awatch->issueid);
-        $watchurl = new moodle_url('/mod/tracker/view.php', $params);
+        $watchurl = new \moodle_url('/mod/tracker/view.php', $params);
         $watchid = '<a href="'.$watchurl.'">'.$tracker->ticketprefix.$awatch->issueid.'</a>';
 
         $table->data[] = array($watchid, $awatch->summary, $awatch->people, $actions, $notifications);
     }
-    echo html_writer::table($table);
+    echo \html_writer::table($table);
 }
 
 echo $OUTPUT->box_end();

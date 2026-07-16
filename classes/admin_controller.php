@@ -42,13 +42,10 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/tracker/classes/controller.class.php');
-
+namespace mod_tracker;
 class admin_controller extends base_controller {
 
     public function receive($cmd, $data = null) {
@@ -167,13 +164,13 @@ class admin_controller extends base_controller {
             // Create element form *************************************************************************.
             $params = array('id' => $this->cm->id, 'type' => $this->data->type, 'elementid' => 0);
             $this->done = true;
-            return new moodle_url('/mod/tracker/editelement.php', $params);
+            return new \moodle_url('/mod/tracker/editelement.php', $params);
 
         } else if ($cmd == 'editelement') {
             // Edit an element form *************************************************************************.
             $params = array('id' => $this->cm->id, 'type' => $this->data->type, 'elementid' => $this->data->elementid);
             $this->done = true;
-            return new moodle_url('/mod/tracker/editelement.php', $params);
+            return new \moodle_url('/mod/tracker/editelement.php', $params);
         }
 
         if ($cmd == 'doupdateelement') {
@@ -184,7 +181,7 @@ class admin_controller extends base_controller {
             }
             $errors = array();
             if (empty($this->data->name)) {
-                $error = new StdClass;
+                $error = new \StdClass;
                 $error->message = get_string('namecannotbeblank', 'tracker');
                 $error->on = 'name';
                 $errors[] = $error;
@@ -234,7 +231,7 @@ class admin_controller extends base_controller {
 
             $params = array('elementid' => $this->data->elementid, 'name' => $this->data->name);
             if ($DB->count_records('tracker_elementitem', $params)) {
-                $error = new StdClass;
+                $error = new \stdClass;
                 $error->message = get_string('optionisused', 'tracker', $this->url);
                 $error->on = 'name';
                 $errors[] = $error;
@@ -242,7 +239,7 @@ class admin_controller extends base_controller {
 
             if ($this->data->name == '') {
                 unset($error);
-                $error = new StdClass;
+                $error = new \stdClass;
                 $error->message = get_string('optionnamecannotbeblank', 'tracker');
                 $error->on = 'name';
                 $errors[] = $error;
@@ -250,7 +247,7 @@ class admin_controller extends base_controller {
 
             if ($this->data->description == '') {
                 unset($error);
-                $error = new StdClass;
+                $error = new \stdClass;
                 $error->message = get_string('descriptionisempty', 'tracker');
                 $error->on = 'description';
                 $errors[] = $error;
@@ -349,7 +346,7 @@ class admin_controller extends base_controller {
             $select = " elementid = ? AND name = ? AND id != ? ";
             $params = [$this->data->elementid, $this->data->name, $this->data->id];
             if ($DB->count_records_select('tracker_elementitem', $select, $params)) {
-                $error = new StdClass;
+                $error = new \StdClass;
                 $error->message = get_string('optionisused', 'tracker');
                 $error->on = 'name';
                 $errors[] = $error;
@@ -357,7 +354,7 @@ class admin_controller extends base_controller {
 
             if ($this->data->name == '') {
                 unset($error);
-                $error = new StdClass;
+                $error = new \StdClass;
                 $error->message = get_string('optionnamecannotbeblank', 'tracker');
                 $error->on = 'name';
                 $errors[] = $error;
@@ -365,7 +362,7 @@ class admin_controller extends base_controller {
 
             if ($this->data->description == '') {
                 unset($error);
-                $error = new StdClass;
+                $error = new \StdClass;
                 $error->message = get_string('descriptionisempty', 'tracker');
                 $error->on = 'description';
                 $errors[] = $error;
@@ -429,7 +426,7 @@ class admin_controller extends base_controller {
             if (!tracker_iselementused($this->tracker->id, $this->data->elementid)) {
 
                 // Add element to element used table.
-                $used = new StdClass;
+                $used = new \StdClass;
                 $used->elementid = $this->data->elementid;
                 $used->trackerid = $this->tracker->id;
                 $used->canbemodifiedby = $USER->id;

@@ -45,14 +45,14 @@ $params = array('tracker' => $tracker,
                 'screen' => 'editanissue');
 $urlparams = array('view' => 'view',
                     'screen' => 'editanissue');
-$form = new TrackerIssueForm(new moodle_url('/mod/tracker/view.php', $urlparams), $params);
+$form = new TrackerIssueForm(new \moodle_url('/mod/tracker/view.php', $urlparams), $params);
 
 if ($form->is_cancelled()) {
     $params = array('id' => $cm->id,
                     'view' => 'view',
                     'screen' => 'viewanissue',
                     'issueid' => $issue->id);
-    redirect(new moodle_url('/mod/tracker/view.php', $params));
+    redirect(new \moodle_url('/mod/tracker/view.php', $params));
 }
 
 if ($data = $form->get_data()) {
@@ -81,7 +81,7 @@ if ($data = $form->get_data()) {
     }
 
     // Log state change.
-    $stc = new StdClass;
+    $stc = new \StdClass;
     $stc->userid = $USER->id;
     $stc->issueid = $issueid;
     $stc->trackerid = $tracker->id;
@@ -125,7 +125,7 @@ if ($data = $form->get_data()) {
         }
         // Install back new one.
         foreach ($dependancies as $dependancy) {
-            $dependancyrec = new StdClass;
+            $dependancyrec = new \StdClass;
             $dependancyrec->trackerid = $tracker->id;
             $dependancyrec->parentid = $dependancy;
             $dependancyrec->childid = $issue->id;
@@ -140,7 +140,7 @@ if ($data = $form->get_data()) {
                     'view' => 'view',
                     'screen' => 'viewanissue',
                     'issueid' => $issue->id);
-    redirect(new moodle_url('/mod/tracker/view.php', $params));
+    redirect(new \moodle_url('/mod/tracker/view.php', $params));
 }
 
 // Start screen.

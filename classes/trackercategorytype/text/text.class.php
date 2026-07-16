@@ -23,9 +23,6 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/classes/trackercategorytype/trackerelement.class.php');
@@ -47,7 +44,7 @@ class textelement extends trackerelement {
                        'name' => 'element'.$this->name,
                        'value' => format_string($this->value),
                        'size' => 80);
-        echo html_writer::empty_tag('input', $attrs);
+        echo \html_writer::empty_tag('input', $attrs);
     }
 
     public function add_form_element(&$mform) {
@@ -67,7 +64,7 @@ class textelement extends trackerelement {
 
         $params = array('elementid' => $this->id, 'trackerid' => $data->trackerid, 'issueid' => $data->issueid);
         if (!$attribute = $DB->get_record('tracker_issueattribute', $params)) {
-            $attribute = new StdClass();
+            $attribute = new \StdClass();
             $attribute->trackerid = $data->trackerid;
             $attribute->issueid = $data->issueid;
             $attribute->elementid = $this->id;
