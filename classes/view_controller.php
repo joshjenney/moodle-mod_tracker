@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
 use moodle_url;
 use StdClass;
 
-require_once($CFG->dirroot.'/mod/tracker/classes/controller.class.php');
+require_once($CFG->dirroot.'/mod/tracker/classes/controller_class.php');
 
 class view_controller extends base_controller {
 

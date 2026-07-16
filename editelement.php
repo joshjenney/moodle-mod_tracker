@@ -45,15 +45,15 @@ $PAGE->set_context($context);
 $PAGE->set_title(format_string($tracker->name));
 $PAGE->set_heading(format_string($tracker->name));
 
-if (!file_exists($CFG->dirroot.'/mod/tracker/classes/trackercategorytype/'.$type.'/tracker_element_'.$type.'_form.php')) {
-    print_error('Missing element form');
+// ce 6-23-26, updating for new way for moodle to handle classes
+
+$formname = '\\mod_tracker\\tracker_element_' . $type . '_form';
+
+if (!class_exists($formname)) {
+die("<h3>DEBUG CRASH</h3><p>Moodle is looking for exactly this class: <b>" . $formname . "</b></p>");
 }
 
-require_once($CFG->dirroot.'/mod/tracker/classes/trackercategorytype/'.$type.'/tracker_element_'.$type.'_form.php');
-
-$formname = 'mod_tracker\\tracker_element_'.$type.'_form';
 $form = new $formname(new moodle_url('/mod/tracker/editelement.php'), array('id' => $id));
-
 if ($form->is_cancelled()) {
     $params = array('id' => $id, 'view' => $view, 'screen' => $screen);
     redirect(new moodle_url('/mod/tracker/view.php', $params));

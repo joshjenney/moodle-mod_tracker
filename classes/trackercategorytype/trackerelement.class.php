@@ -178,11 +178,21 @@ abstract class trackerelement {
      * in case we have options (such as checkboxes or radio lists, get options from db.
      * this is backcalled by specific type constructors after core construction.
      */
-    public function set_options_from_db() {
+// CE Changed on 7-25 to handle invisible elements
+     public function set_options_from_db($issueid = null) {
         global $DB;
 
         if (isset($this->id)) {
-            $this->options = $DB->get_records_select('tracker_elementitem', " elementid = ? AND active = 1 ORDER BY sortorder", array($this->id));
+            // If we have an issueid, fetch all items to support legacy data display.
+            // Otherwise, keep only active items for new submissions.
+            $sql = "SELECT * FROM {tracker_elementitem} WHERE elementid = ?";
+            if (empty($issueid)) {
+                $sql .= " AND active = 1";
+            }
+            $sql .= " ORDER BY sortorder";
+
+            $this->options = $DB->get_records_sql($sql, array($this->id));
+            
             if ($this->options) {
                 foreach ($this->options as $option) {
                     $this->maxorder = max($option->sortorder, $this->maxorder);
@@ -194,7 +204,6 @@ abstract class trackerelement {
             print_error('errorinvalidelementID', 'tracker');
         }
     }
-
     /**
      * Gets the current value for this element instance in an issue.
      */

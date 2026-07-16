@@ -1,4 +1,5 @@
 <?php
+namespace mod_tracker;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,13 +20,11 @@
  * @category mod
  * @author Valery Fremaux / 1.8
  */
-namespace mod_tracker;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/forms/tracker_element_form_base.php');
 
-class tracker_element_dropdown_form extends tracker_moodle_form {
+class tracker_element_checkboxhoriz_form extends \mod_tracker\tracker_moodle_form {
 
     public function definition() {
         $this->start_form();

@@ -36,7 +36,10 @@ class dropdownelement extends trackerelement {
 
     public function __construct(&$tracker, $id = null, $used = false) {
         parent::__construct($tracker, $id, $used);
-        $this->set_options_from_db();
+// Pass the issueid if it's available in the context
+        $issueid = optional_param('issueid', 0, PARAM_INT);
+        $this->set_options_from_db($issueid);
+
     }
 
     public function view($issueid = 0) {

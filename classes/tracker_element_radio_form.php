@@ -15,9 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod
- * @subpackage tracker
- * @copyright  2010 onwards Valery Fremaux {valery.fremaux@gmail.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_tracker
+ * @category mod
+ * @author Valery Fremaux / 1.8
+ *
+ * A class implementing a hidden/labelled element that captures the referer url
  */
+namespace mod_tracker;
+
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot.'/mod/tracker/forms/tracker_element_form_base.php');
+
+class tracker_element_radio_form extends \mod_tracker\tracker_moodle_form {
+
+    public function definition() {
+        $this->start_form();
+        $this->end_form();
+    }
+}

@@ -15,22 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod_tracker
+ * @package mod-tracker
  * @category mod
- * @author Valery Fremaux / 1.8
+ * @author Clifford Tham, Valery Fremaux > 1.8
+ * @date 02/12/2007
  *
- * A class implementing a hidden/labelled element that captures the referer url
+ * A view that layouts the element administration
  */
-namespace mod_tracker;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/tracker/forms/tracker_element_form_base.php');
+$renderer = $PAGE->get_renderer('tracker', 'admin');
+$renderer->init($tracker, $cm);
 
-class tracker_element_radio_form extends tracker_moodle_form {
-
-    public function definition() {
-        $this->start_form();
-        $this->end_form();
-    }
-}
+echo $output;
+echo $renderer->admin_table($tracker);

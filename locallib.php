@@ -79,19 +79,20 @@ function tracker_get_context($cmid, $instanceid) {
     return array($cm, $tracker, $course);
 }
 
+// Chris Everett deprecated the old function and replaced this on 6-23-26
 function tracker_get_controller($view, $tracker, $cm, $url = '') {
-    global $CFG;
+    // Check if a 'Pro' extended controller exists via the autoloader
+    $extended_class = '\\mod_tracker\\' . $view . '_controller_extended';
+    $standard_class = '\\mod_tracker\\' . $view . '_controller';
 
-    if (file_exists($CFG->dirroot.'/mod/tracker/pro/views/'.$view.'.controller.php')) {
-        include($CFG->dirroot.'/mod/tracker/pro/views/'.$view.'.controller.php');
-        $class = '\\mod_tracker\\'.$view.'_controller_extended';
-        return new $class($tracker, $cm, $url);
+    // Let PHP and Moodle's autoloader handle the heavy lifting
+    if (class_exists($extended_class)) {
+        return new $extended_class($tracker, $cm, $url);
     } else {
-        include($CFG->dirroot.'/mod/tracker/pro/views/'.$view.'.controller.php');
-        $class = '\\mod_tracker\\'.$view.'_controller';
-        return new $class($tracker, $cm, $url);
+        return new $standard_class($tracker, $cm, $url);
     }
 }
+
 
 function tracker_requires($view, $screen) {
     global $PAGE;

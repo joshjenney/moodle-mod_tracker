@@ -49,34 +49,22 @@ class datalist {
         $idfield = $this->itemidfield;
         $orderfield = $this->orderfield;
 
+        // 1. Get the current item we want to move
         $params = array($idfield => $itemid);
         $this->add_context($params);
         $item = $DB->get_record($this->table, $params);
-        $params = array($idfield => $item->$idfield, $orderfield => $item->$orderfield + 1);
-        if (!$nextitem = $DB->get_record($this->table, $params)) {
+
+        // Can't move up if it doesn't exist, or if it's already at the very top (sortorder 1 or 0)
+        if (!$item || $item->$orderfield <= 1) {
             return;
         }
-        $nextitem->$orderfield--;
-        $item->$orderfield++;
-        $DB->update_record($this->table, $item);
-        $DB->update_record($this->table, $nextitem);
-    }
 
-    public function down($itemid) {
-        global $DB;
+        // 2. Find the item directly above it (sort order - 1)
+        $searchparams = array($orderfield => $item->$orderfield - 1);
+        $this->add_context($searchparams);
+        $previtem = $DB->get_record($this->table, $searchparams);
 
-        $idfield = $this->itemidfield;
-        $orderfield = $this->orderfield;
-
-        $params = array($idfield => $itemid);
-        $this->add_context($params);
-        $item = $DB->get_record($this->table, $params);
-        if ($item->$orderfield == 0) {
-            return;
-        }
-        $params = array($idfield => $item->$idfield, $orderfield => $item->$orderfield - 1);
-        $this->add_context($params);
-        $previtem = $DB->get_record($this->table, $params);
+        // 3. Swap their sort orders and update the database
         if (!empty($previtem)) {
             $previtem->$orderfield++;
             $item->$orderfield--;
@@ -84,7 +72,35 @@ class datalist {
             $DB->update_record($this->table, $previtem);
         }
     }
+   public function down($itemid) {
+        global $DB;
 
+        $idfield = $this->itemidfield;
+        $orderfield = $this->orderfield;
+
+        // 1. Get the current item we want to move
+        $params = array($idfield => $itemid);
+        $this->add_context($params);
+        $item = $DB->get_record($this->table, $params);
+
+        if (!$item) {
+            return;
+        }
+
+        // 2. Find the item directly below it (sort order + 1)
+        // CRITICAL FIX: Do not search by the original item's ID!
+        $searchparams = array($orderfield => $item->$orderfield + 1);
+        $this->add_context($searchparams);
+        $nextitem = $DB->get_record($this->table, $searchparams);
+
+        // 3. Swap their sort orders and update the database
+        if (!empty($nextitem)) {
+            $nextitem->$orderfield--;
+            $item->$orderfield++;
+            $DB->update_record($this->table, $item);
+            $DB->update_record($this->table, $nextitem);
+        }
+    }
     public function last_order($itemid) {
         global $DB;
 
@@ -93,29 +109,54 @@ class datalist {
         $lastorder = $DB->get_field($this->table, 'MAX('.$this->orderfield.')', $params);
         return $lastorder;
     }
-
     public function remove($itemid) {
         global $DB;
 
         $idfield = $this->itemidfield;
         $orderfield = $this->orderfield;
 
+        // 1. Get the target item to find its current sort order
         $params = array($idfield => $itemid);
         $this->add_context($params);
-        $oldorder = $DB->get_field($this->table, $orderfield, $params);
-        $DB->delete_records($this->table, $params);
-        $sql = "
-            UPDATE
-                {".$this->table."} bas
-            SET
-                $orderfield = $orderfield - 1
-            WHERE
-                $idfield = ? AND
-                $orderfield > ?
-        ";
-        $DB->execute($sql, array($itemid, $oldorder));
-    }
+        $item = $DB->get_record($this->table, $params);
 
+        if (!$item) {
+            return;
+        }
+
+        $oldorder = $item->$orderfield;
+
+        // 2. Safely delete the item from the database
+        $DB->delete_records($this->table, array($idfield => $itemid));
+
+        // 3. Find all items below it in the SAME list to close the gap
+        $searchparams = array();
+        $this->add_context($searchparams); 
+        
+        $where = array();
+        $values = array();
+        
+        // Dynamically build the context (e.g., matching the same elementid)
+        foreach ($searchparams as $field => $val) {
+            $where[] = "$field = ?";
+            $values[] = $val;
+        }
+        
+        // Target only the items below the one we just deleted
+        $where[] = "$orderfield > ?";
+        $values[] = $oldorder;
+        
+        $select = implode(' AND ', $where);
+        $itemstoupdate = $DB->get_records_select($this->table, $select, $values);
+
+        // 4. Shift them all up by 1
+        if ($itemstoupdate) {
+            foreach ($itemstoupdate as $toupdate) {
+                $toupdate->$orderfield--;
+                $DB->update_record($this->table, $toupdate);
+            }
+        }
+    }
     /**
      * Add the context to the query params
      */

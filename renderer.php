@@ -715,8 +715,8 @@ class mod_tracker_renderer extends plugin_renderer_base {
         $template->id = $cm->id;
         $template->action = $action;
         $template->actionstr = get_string($action.'option', 'tracker');
-        $template->type = $form->type;
-        $template->elementid = $form->elementid;
+        $template->type = $form->type ?? '';
+        $template->elementid = $form->elementid ?? 0;
         $template->optionid = @$form->optionid;
 
         $template->errorclassname = print_error_class($errors, 'name');
@@ -730,7 +730,7 @@ class mod_tracker_renderer extends plugin_renderer_base {
 
         return $this->output->render_from_template('mod_tracker/editoptionsform', $template);
     }
-
+// 6-25-26  CE Replaced this function to include hide/unhide for elements
     public function option_list_view(&$cm, &$element) {
         global $COURSE, $DB;
 
@@ -744,9 +744,12 @@ class mod_tracker_renderer extends plugin_renderer_base {
         $table->size = array('15%', '15%', '50%', '30%');
         $table->head = array('', "<b>$strname</b>", "<b>$strdescription</b>", "<b>$straction</b>");
 
-        $options = $element->options;
+        // Fetch all options directly to bypass the frontend 'active=1' filter
+        $options = $DB->get_records('tracker_elementitem', ['elementid' => $element->id], 'sortorder');
+        
         if (!empty($options)) {
             foreach ($options as $option) {
+                // 1. Edit Action
                 $params = array('id' => $cm->id,
                                 'view' => 'admin',
                                 'what' => 'editelementoption',
@@ -754,8 +757,9 @@ class mod_tracker_renderer extends plugin_renderer_base {
                                 'elementid' => $option->elementid);
                 $editoptionurl = new moodle_url('/mod/tracker/view.php', $params);
                 $pix = $this->output->pix_icon('/t/edit', '', 'core');
-                $actions  = '<a href="'.$editoptionurl.'" title="'.get_string('edit').'">'.$pix.'</a>&nbsp;';
+                $actions = '<a href="'.$editoptionurl.'" title="'.get_string('edit').'">'.$pix.'</a>&nbsp;';
 
+                // 2. Move Up Action
                 $img = ($option->sortorder > 1) ? 'up' : 'up_shadow';
                 $params = array('id' => $cm->id,
                                 'view' => 'admin',
@@ -766,6 +770,7 @@ class mod_tracker_renderer extends plugin_renderer_base {
                 $pix = $this->output->pix_icon("{$img}", '', 'mod_tracker');
                 $actions .= '<a href="'.$moveurl.'" title="'.get_string('up').'">'.$pix.'</a>&nbsp;';
 
+                // 3. Move Down Action
                 $img = ($option->sortorder < $element->maxorder) ? 'down' : 'down_shadow';
                 $params = array('id' => $cm->id,
                                 'view' => 'admin',
@@ -776,7 +781,8 @@ class mod_tracker_renderer extends plugin_renderer_base {
                 $pix = $this->output->pix_icon("{$img}", '', 'mod_tracker');
                 $actions .= '<a href="'.$moveurl.'" title="'.get_string('down').'">'.$pix.'</a>&nbsp;';
 
-                $usingissues = $DB->get_records('tracker_issueattribute', array('elementitemid' => $option->id), 'id', '*', 0, 1);
+                // 4. Delete Action (with usage check)
+                $usingissues = $DB->get_records_select('tracker_issueattribute', $DB->sql_compare_text('elementitemid')." = ?", [$option->id]);
                 if (empty($usingissues)) {
                     $params = array('id' => $cm->id,
                                     'view' => 'admin',
@@ -785,24 +791,50 @@ class mod_tracker_renderer extends plugin_renderer_base {
                                     'elementid' => $option->elementid);
                     $deleteurl = new moodle_url('/mod/tracker/view.php', $params);
                     $pix = $this->output->pix_icon('/t/delete', '', 'core');
-                    $actions .= '<a href="'.$deleteurl.'" title="'.get_string('delete').'">'.$pix.'</a>';
+                    $actions .= '<a href="'.$deleteurl.'" title="'.get_string('delete').'">'.$pix.'</a>&nbsp;';
                 } else {
                     $firstusing = array_shift($usingissues);
                     $pix = $this->output->pix_icon('/t/delete', '', 'core');
                     $str = get_string('cannotdeleteoption', 'tracker');
-                    $params = ['id' => $cm->id, 'view' => 'view', 'screen' => 'viewanissue', 'issueid' => $firstusing->id];
+                    $params = ['id' => $cm->id, 'view' => 'view', 'screen' => 'viewanissue', 'issueid' => $firstusing->issueid];
                     $firstuseurl = new moodle_url('/mod/tracker/view.php', $params);
-                    $actions .= '<a target="_blank" href="'.$firstuseurl.'" class="shadowed" title="'.$str.'">'.$pix.'</a>';
+                    $actions .= '<a target="_blank" href="'.$firstuseurl.'" class="shadowed" title="'.$str.'">'.$pix.'</a>&nbsp;';
                 }
 
+                // 5. Visibility Toggle Action (NEW)
+                $isactive = isset($option->active) ? $option->active : 1; // Default to active if missing
+                if ($isactive) {
+                    $togglecmd = 'setoptioninactive';
+                    $toggleicon = 't/hide'; // Standard eye icon
+                    $toggletitle = get_string('hide');
+                    $dimclass = ''; 
+                } else {
+                    $togglecmd = 'setoptionactive';
+                    $toggleicon = 't/show'; // Standard eye-closed icon
+                    $toggletitle = get_string('show');
+                    $dimclass = 'dimmed_text'; // Moodle CSS to grey out text
+                }
+
+                $params = array('id' => $cm->id,
+                                'view' => 'admin',
+                                'what' => $togglecmd,
+                                'optionid' => $option->id,
+                                'elementid' => $option->elementid);
+                $toggleurl = new moodle_url('/mod/tracker/view.php', $params);
+                $pix = $this->output->pix_icon($toggleicon, '', 'core');
+                $actions .= '<a href="'.$toggleurl.'" title="'.$toggletitle.'">'.$pix.'</a>&nbsp;';
+
+
+                // Build the table row, applying the dimmed class if inactive
+                $displayname = $isactive ? $option->name : '<span class="'.$dimclass.'">'.$option->name.'</span>';
+                $displaydesc = $isactive ? format_text($option->description, FORMAT_HTML) : '<span class="'.$dimclass.'">'.format_text($option->description, FORMAT_HTML).'</span>';
+
                 $rowlabel = '<b> '.get_string('option', 'tracker').' '.$option->sortorder.':</b>';
-                // $table->data[] = array($rowlabel, $option->name, format_string($option->description, true, $COURSE->id), $actions);
-                $table->data[] = array($rowlabel, $option->name, format_text($option->description, FORMAT_HTML), $actions);
+                $table->data[] = array($rowlabel, $displayname, $displaydesc, $actions);
             }
         }
         return html_writer::table($table);
     }
-
     public function issue_js_init() {
         $str = '<script type="text/javascript">';
         $str .= '    var showhistory = "'.get_string('showhistory', 'tracker').'";';
@@ -891,7 +923,11 @@ class mod_tracker_renderer extends plugin_renderer_base {
             $actions .= '&nbsp;<a href="'.$deleteurl.'" title="'.$alt.'" >'.$pix.'</a>';
         }
 
-        if (!$DB->get_record('tracker_issuecc', array('trackerid' => $issuer->trackerid, 'userid' => $USER->id, 'issueid' => $issue->id))) {
+// Fallback to $issue if $issuer is undefined
+        $current_issuer = $issuer ?? $issue;
+
+        // Ensure we have a valid object and user ID
+        if (is_object($current_issuer) && !$DB->get_record('tracker_issuecc', array('trackerid' => $current_issuer->trackerid ?? 0, 'userid' => $USER->id))) {
             $params = array('id' => $cm->id,
                             'view' => 'profile',
                             'screen' => $screen,
@@ -902,7 +938,6 @@ class mod_tracker_renderer extends plugin_renderer_base {
             $pix = $this->output->pix_icon('register', $alt, 'mod_tracker');
             $actions .= '&nbsp;<a href="'.$registerurl.'" title="'.$alt.'" >'.$pix.'</a>';
         }
-
         $sort = optional_param('sort', 'resolutionpriority', PARAM_TEXT);
         if (preg_match('/^resolutionpriority/', $sort)) {
             $actions .= $this->prioritycontrols_listform_part($cm, $issue, $context);
@@ -1176,8 +1211,8 @@ class mod_tracker_renderer extends plugin_renderer_base {
         $template->trackerid = $tracker->id;
 
         // Listable column name.
-        $template->haslistables = $tracker->haslistables;
-        if (!empty($tracker->listables)) {
+        $template->haslistables = $tracker->haslistables ?? false;
+        if (!empty($tracker->listables ?? null)) {
             foreach ($tracker->listables as $listable) {
                 $listabletpl = new StdClass;
                 $listabletpl->name = $listable->name;
@@ -1232,13 +1267,15 @@ class mod_tracker_renderer extends plugin_renderer_base {
                 $issuetpl->reportedby = fullname($user);
 
                 // Listable fields.
-                if ($tracker->haslistables) {
+                if ($tracker->haslistables ?? false) {
+                   if (!empty($tracker->listables)) {
                     foreach ($tracker->listables as $listable) {
                         $listabletpl = new StdClass;
                         $listabletpl->name = $listable->name;
                         $listabletpl->value = $listable->view($issue->id);
                         $issuetpl->listables[] = $listabletpl;
                     }
+		  }
                 }
 
                 // Issue assigned.

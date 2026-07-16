@@ -25,10 +25,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/forms/tracker_element_form_base.php');
 
-class tracker_element_checkbox_form extends tracker_moodle_form {
+class tracker_element_dropdown_form extends \mod_tracker\tracker_moodle_form {
 
     public function definition() {
         $this->start_form();
         $this->end_form();
     }
+
 }

@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_tracker;
+
 /**
  * @package mod_tracker
  * @category mod
  * @author Valery Fremaux / 1.8
  */
-namespace mod_tracker;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/forms/tracker_element_form_base.php');
 
-class tracker_element_textarea_form extends tracker_moodle_form {
+class tracker_element_text_form extends \mod_tracker\tracker_moodle_form {
 
     public function definition() {
         $this->start_form();
