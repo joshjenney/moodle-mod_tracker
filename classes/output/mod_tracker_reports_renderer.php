@@ -54,7 +54,7 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
                 $this->lowest = $availdates[0];
 
                 $this->highest = $availdates[count($availdates) - 1];
-                $low = new StdClass();
+                $low = new \StdClass();
                 list($low->year, $low->month) = explode('-', $this->lowest);
             }
 

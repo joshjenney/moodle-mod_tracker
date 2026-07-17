@@ -23,9 +23,6 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/classes/trackercategorytype/trackerelement.class.php');
@@ -69,8 +66,8 @@ class dropdownelement extends trackerelement {
             foreach ($this->options as $optionobj) {
                 $selectoptions[$optionobj->name] = $optionobj->description;
             }
-            echo html_writer::select($selectoptions, 'element'.$this->name, $values, array('' => 'choosedots'));
-            echo html_writer::empty_tag('br');
+            echo \html_writer::select($selectoptions, 'element'.$this->name, $values, array('' => 'choosedots'));
+            echo \html_writer::empty_tag('br');
         }
     }
 
@@ -121,7 +118,7 @@ class dropdownelement extends trackerelement {
 
         $sqlparams = array('elementid' => $this->id, 'trackerid' => $data->trackerid, 'issueid' => $data->issueid);
         if (!$attribute = $DB->get_record('tracker_issueattribute', $sqlparams)) {
-            $attribute = new StdClass();
+            $attribute = new \StdClass();
             $attribute->trackerid = $data->trackerid;
             $attribute->issueid = $data->issueid;
             $attribute->elementid = $this->id;

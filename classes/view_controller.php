@@ -37,14 +37,6 @@ namespace mod_tracker;
 
 defined('MOODLE_INTERNAL') || die();
 
-use moodle_url;
-use StdClass;
-use Exception;
-use coding_exception;
-use context_module;
-
-require_once($CFG->dirroot.'/mod/tracker/classes/controller_class.php');
-
 class view_controller extends base_controller {
 
     public function receive($cmd, $data = null) {
@@ -113,7 +105,7 @@ class view_controller extends base_controller {
             }
 
             case 'split': {
-                throw new Exception("Only in pro version");
+                throw new \Exception("Only in pro version");
             }
 
             case 'deletecomment': {
@@ -137,7 +129,7 @@ class view_controller extends base_controller {
         // Update an issue ********************************************************************.
 
         if ($cmd == 'updateanissue') {
-            throw new coding_exception('This use case has been moved to editanissue.php. The code should never reach this point.');
+            throw new \coding_exception('This use case has been moved to editanissue.php. The code should never reach this point.');
 
         } else if ($cmd == 'solve') {
 
@@ -148,7 +140,7 @@ class view_controller extends base_controller {
             $DB->update_record('tracker_issue', $issue);
 
             // Log state change.
-            $stc = new StdClass;
+            $stc = new \StdClass;
             $stc->userid = $USER->id;
             $stc->issueid = $issueid;
             $stc->trackerid = $this->tracker->id;
@@ -170,7 +162,7 @@ class view_controller extends base_controller {
                 }
             }
             $params = array('id' => $this->cm->id, 'view' => 'view', 'screen' => 'mytickets');
-            redirect(new moodle_url('/mod/tracker/view.php', $params));
+            redirect(new \moodle_url('/mod/tracker/view.php', $params));
 
         } else if ($cmd == 'delete') {
 
@@ -232,7 +224,7 @@ class view_controller extends base_controller {
                 $akey = clean_param($akey, PARAM_TEXT); // Ensure we are secure.
                 $issueid = str_replace('status', '', $akey);
                 if ($this->data->statushaschanged[$issueid]) {
-                    $issue = new StdClass;
+                    $issue = new \StdClass;
                     $issue->id = $issueid;
                     $issue->status = $this->data->status[$akey];
                     $oldstatus = $DB->get_field('tracker_issue', 'status', array('id' => $issue->id));
@@ -243,7 +235,7 @@ class view_controller extends base_controller {
                             tracker_notifyccs_changestate($issue->id, $this->tracker);
                         }
                         // Log state change.
-                        $stc = new StdClass;
+                        $stc = new \StdClass;
                         $stc->userid = $USER->id;
                         $stc->issueid = $issue->id;
                         $stc->trackerid = $this->tracker->id;
@@ -264,7 +256,7 @@ class view_controller extends base_controller {
                     // Save old assignement in history.
                     $oldassign = $DB->get_record('tracker_issue', array('id' => $issueid));
                     if ($oldassign->assignedto != 0) {
-                        $ownership = new StdClass;
+                        $ownership = new \StdClass;
                         $ownership->trackerid = $this->tracker->id;
                         $ownership->issueid = $issueid;
                         $ownership->userid = $oldassign->assignedto;
@@ -274,7 +266,7 @@ class view_controller extends base_controller {
                     }
 
                     // Update actual ticket.
-                    $issue = new StdClass;
+                    $issue = new \StdClass;
                     $issue->id = $issueid;
                     $issue->bywhomid = $USER->id;
                     $issue->timeassigned = time();
@@ -389,7 +381,7 @@ class view_controller extends base_controller {
                 $userroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $USER->mnethostid));
                 $rpcclient = new mnet_xmlrpc_client();
                 $rpcclient->set_method('mod/tracker/rpclib.php/tracker_rpc_post_issue');
-                $user = new StdClass;
+                $user = new \StdClass;
                 $user->username = $USER->username;
                 $user->firstname = $USER->firstname;
                 $user->lastname = $USER->lastname;
@@ -426,12 +418,12 @@ class view_controller extends base_controller {
                     $issue->downlink = ''; // Reset downlink from what has been sent other side.
                     try {
                         $DB->update_record('tracker_issue', $issue);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         print_error('errorcannotupdateissuecascade', 'tracker');
                     }
 
                     // Log state change.
-                    $stc = new StdClass;
+                    $stc = new \StdClass;
                     $stc->userid = $USER->id;
                     $stc->issueid = $issue->id;
                     $stc->trackerid = $this->tracker->id;
@@ -467,7 +459,7 @@ class view_controller extends base_controller {
 
             $trackermoduleid = $DB->get_field('modules', 'id', array('name' => 'tracker'));
             $newcm = $DB->get_record('course_modules', array('instance' => $newtracker->id, 'module' => $trackermoduleid));
-            $newcontext = context_module::instance($newcm->id);
+            $newcontext = \context_module::instance($newcm->id);
 
             // If assignee is in not this tracker remap assignee to default.
 
@@ -485,7 +477,7 @@ class view_controller extends base_controller {
 
                 // Log state change.
                 if ($oldstatus != $issue->status) {
-                    $stc = new StdClass;
+                    $stc = new \StdClass;
                     $stc->userid = $USER->id;
                     $stc->issueid = $issue->id;
                     $stc->trackerid = $newtracker->id;
@@ -510,7 +502,7 @@ class view_controller extends base_controller {
 
             // We must stay in our own tracker to continue distributing.
             $params = array('id' => $this->cm->id, 'view' => 'view', 'screen' => tracker_resolve_screen($this->tracker, $this->cm, true));
-            $trackerurl = new moodle_url('/mod/tracker/view.php', $params);
+            $trackerurl = new \moodle_url('/mod/tracker/view.php', $params);
             redirect($trackerurl);
             // TODO : if watchers do not have capability in the new tracker, discard them.
 
@@ -605,7 +597,7 @@ class view_controller extends base_controller {
             $issueid = $this->data->issueid;
             if ($DB->get_record('tracker_issue', ['id' => $issueid, 'trackerid' => $this->tracker->id])) {
                 $params = ['id' => $this->cm->id, 'view' => 'view', 'screen' => 'viewanissue', 'issueid' => $issueid];
-                $ticketurl = new moodle_url('/mod/tracker/view.php', $params);
+                $ticketurl = new \moodle_url('/mod/tracker/view.php', $params);
                 redirect($ticketurl);
             }
 
@@ -663,7 +655,7 @@ class view_controller extends base_controller {
 
             // Redirect to ticket editing so issue can be completed with complete info.
             $params = ['view' => $view, 'screen' => 'editanissue', 'issueid' => $newid];
-            $redirecturl = new moodle_url('/mod/tracker/view.php', $params);
+            $redirecturl = new \moodle_url('/mod/tracker/view.php', $params);
             redirect($redirecturl);
 
         } else if ($cmd == 'deletecomment') {

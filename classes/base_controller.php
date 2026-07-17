@@ -26,11 +26,6 @@ namespace mod_tracker;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/tracker/listlib.php');
-
-use Stdclass;
-use Exception;
-
 class base_controller {
 
     public $data;
@@ -80,7 +75,7 @@ class base_controller {
             $this->received = true;
             return true; // Tells child class we are loaded.
         } else {
-            $this->data = new StdClass;
+            $this->data = new \StdClass;
         }
 
         return false; // Tells child class to load it's part.
@@ -90,7 +85,7 @@ class base_controller {
         global $DB, $USER;
 
         if (!$this->received) {
-            throw new Exception("Controller invoked without data.");
+            throw new \Exception("Controller invoked without data.");
         }
     }
 }

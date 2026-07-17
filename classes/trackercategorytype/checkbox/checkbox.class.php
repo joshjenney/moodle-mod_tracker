@@ -23,9 +23,6 @@
  */
 namespace mod_tracker;
 
-use StdClass;
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/tracker/classes/trackercategorytype/trackerelement.class.php');
@@ -40,7 +37,7 @@ class checkboxelement extends trackerelement {
 // Pass the issueid if it's available in the context
         $issueid = optional_param('issueid', 0, PARAM_INT);
         $this->set_options_from_db($issueid);
-        $this->spacer = html_writer::empty_tag('br');
+        $this->spacer = \html_writer::empty_tag('br');
     }
 
     public function edit($issueid = 0) {
@@ -57,10 +54,10 @@ class checkboxelement extends trackerelement {
                                    'name' => 'element'.$this->name.$option->id,
                                    'value' => 1,
                                    'checked' => 'checked');
-                    echo html_writer::empty_tag('input', $attrs);
+                    echo \html_writer::empty_tag('input', $attrs);
                 } else {
                     $attrs = array('type' => 'checkbox', 'name' => 'element'.$this->name.$option->id, 'value' => 1);
-                    echo html_writer::empty_tag('input', $attrs);
+                    echo \html_writer::empty_tag('input', $attrs);
                 }
                 echo format_string($option->description);
                 echo $this->spacer;
@@ -117,7 +114,7 @@ class checkboxelement extends trackerelement {
 
         $params = array('elementid' => $this->id, 'trackerid' => $data->trackerid, 'issueid' => $data->issueid);
         if (!$attribute = $DB->get_record('tracker_issueattribute', $params)) {
-            $attribute = new StdClass();
+            $attribute = new \StdClass();
             $attribute->trackerid = $data->trackerid;
             $attribute->issueid = $data->issueid;
             $attribute->elementid = $this->id;

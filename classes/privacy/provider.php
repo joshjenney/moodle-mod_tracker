@@ -233,7 +233,7 @@ class provider implements \core_privacy\local\metadata\provider {
         foreach ($contextlist->get_contexts() as $ctx) {
             $instance = writer::withcontext($ctx);
 
-            $data = new StdClass;
+            $data = new \StdClass;
 
             // Get issues and elements.
             $params = ['trackerid' => $ctx->instanceid, 'reportedby' => $user->id];
