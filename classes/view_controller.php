@@ -39,6 +39,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 use StdClass;
+use Exception;
+use coding_exception;
+use context_module;
 
 require_once($CFG->dirroot.'/mod/tracker/classes/controller_class.php');
 

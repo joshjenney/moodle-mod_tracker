@@ -26,6 +26,7 @@ namespace mod_tracker;
 use StdClass;
 use html_writer;
 use file_picker;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
