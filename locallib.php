@@ -1156,10 +1156,8 @@ function tracker_notify_submission($issue, &$cm, $tracker = null) {
     }
 
 	// M4
-    // N2NCU custom patch needed here
-    // $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
-    // $fields = 'u.id,'.implode(',', $fields);
-    $field = null;
+    $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
+    $fields = 'u.id,'.implode(',', $fields);
 
     $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');

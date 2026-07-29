@@ -27,13 +27,13 @@ require_once($CFG->dirroot.'/mod/tracker/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course.
 
-if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
-}
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 // Security.
 
 require_login($course->id);
+
+$context = context_course::instance($course->id);
 
 // Trigger instances list viewed event.
 $event = \mod_tracker\event\course_module_instance_list_viewed::create(array('context' => $context));
@@ -45,18 +45,19 @@ $strtrackers = get_string('modulenameplural', 'tracker');
 $strtracker  = get_string('modulename', 'tracker');
 
 // Print the header.
-$navigation = build_navigation($strtrackers);
+$PAGE->set_url('/mod/tracker/index.php', array('id' => $id));
+$PAGE->set_context($context);
 $PAGE->set_title($strtrackers);
-$PAGE->set_heading($strtrackers);
+$PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strtrackers);
 $PAGE->set_cacheable(true);
-$PAGE->set_button('');
-$PAGE->set_headingmenu(navmenu($course));
 echo $OUTPUT->header();
 
 // Get all the appropriate data.
 if (! $trackers = get_all_instances_in_course('tracker', $course)) {
-    echo $OUTPUT->notification(get_string('notrackers', 'tracker'), new moodle_url('course/view.php', array('id' => $course->id)));
+    echo $OUTPUT->notification(get_string('notrackers', 'tracker'),
+        new moodle_url('/course/view.php', array('id' => $course->id)));
+    echo $OUTPUT->footer();
     die;
 }
 
@@ -65,6 +66,8 @@ $timenow = time();
 $strname = get_string('name');
 $strweek = get_string('week');
 $strtopic = get_string('topic');
+
+$table = new html_table();
 
 if ($course->format == 'weeks') {
     $table->head  = array ($strweek, $strname);
@@ -101,4 +104,4 @@ echo html_writer::table($table);
 
 // Finish the page.
 
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();

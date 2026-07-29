@@ -27,12 +27,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2023060400;  // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2022041900;
+$plugin->version  = 2026072700;  // The current module version (Date: YYYYMMDDXX).
+$plugin->requires = 2022112800;  // Moodle 4.1 (Build: 20221128).
 $plugin->component = 'mod_tracker';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '4.0.0 (Build 2023060400)';
-$plugin->supported = [400, 401];
+$plugin->supported = [401, 405];
 $plugin->dependencies = array('local_vflibs' => 2016081100);
 
 // Non Moodle attributes.

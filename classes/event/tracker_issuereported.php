@@ -66,42 +66,8 @@ class tracker_issuereported extends tracker_baseevent {
         return new \moodle_url('/mod/'.$this->other['modulename'].'/view.php', $params);
     }
 
-    /**
-     * Legacy event name.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'reportissue';
-    }
 
-    /**
-     * Legacy event data.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename = $this->other['modulename'];
-        $eventdata->name       = $this->other['name'];
-        $eventdata->cmid       = $this->objectid;
-        $eventdata->courseid   = $this->courseid;
-        $eventdata->userid     = $this->userid;
-        return $eventdata;
-    }
 
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        $logurl = '../mod/'.$this->other['modulename'].'/view.php?id=';
-        $logurl .= $this->objectid.'&amp;view=view&amp;screen=viewanissue&amp;issueid='.$this->other['issueid'];
-        $info = $this->other['modulename'].' '.$this->other['instanceid'];
-        $log1 = array($this->courseid, "course", "commentissue",  $logurl, $info);
-        return array($log1);
-    }
 
 }
 
