@@ -120,6 +120,10 @@ if (tracker_can_edit($tracker, $context, $issue)) {
     echo $renderer->edit_link($issue, $cm);
 }
 
+if (!empty($issue->resolution)) {	// n2ncu: moved to core_issue rendering from after issue_attributes
+    echo $renderer->resolution($issue);
+}
+
 echo $renderer->core_issue($issue, $tracker);
 
 echo '<!--Print Bug Attributes-->';
@@ -127,9 +131,7 @@ echo '<!--Print Bug Attributes-->';
 if (is_array($elementsused)) {
     echo $renderer->issue_attributes($issue, $elementsused);
 }
-if (!empty($issue->resolution)) {
-    echo $renderer->resolution($issue);
-}
+
 $showcommentslink = '';
 $addcommentlink = '';
 if ($tracker->enablecomments) {

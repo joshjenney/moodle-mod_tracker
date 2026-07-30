@@ -783,4 +783,7 @@ $string['update_html_tpl'] = '
 <a href="<%%CCURL%%>">S\'abonner aux événements de cette fiche</a></p>
 ';
 
+$string['instructionslabel'] = 'Instructions';
+$string['instructionsdetails'] = "<p>Si c'est la première fois que vous soumettez une demande d'assistance, veuillez regarder les <a target='_blank' href='https://online.n2ncu.org/mod/page/view.php?id=1185'><b>vidéos de ressources pour les étudiants</b></a> et consulter la <a target='_blank' href='https://online.n2ncu.org/mod/page/view.php?id=1184'><b>foire aux questions</b></a>. Merci !</p>";
+
 require(__DIR__.'/pro_additional_strings.php');

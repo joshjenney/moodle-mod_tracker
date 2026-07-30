@@ -69,6 +69,12 @@ class TrackerIssueForm extends moodleform {
         $mform->setType('trackerid', PARAM_INT);
 
         $mform->addElement('header', 'header0', get_string('description'));
+        
+	    $mform->addElement(					// n2ncu: add custom instructions
+		    'static',					                    // element type
+		    'instructions',					                // unique element name
+		    get_string('instructionslabel', 'tracker'),	    // label string
+		    get_string('instructionsdetails', 'tracker'));	// HTML/text
 
         $mform->addElement('text', 'summary', get_string('summary', 'tracker'), array('size' => 80));
         $mform->setType('summary', PARAM_TEXT);
