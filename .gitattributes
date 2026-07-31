@@ -1,0 +1,3 @@
+# These files mirror a Linux server. Preserve bytes exactly so md5 comparison
+# against the deployed copies stays a valid check.
+* -text
