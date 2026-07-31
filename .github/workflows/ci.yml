@@ -53,7 +53,7 @@ jobs:
 
       - name: Install moodle-plugin-ci
         run: |
-          moodle-plugin-ci install --plugin ./plugin --plugin ./plugin-deps/local_vflibs --db-host=127.0.0.1
+          moodle-plugin-ci install --plugin ./plugin --extra-plugins ./plugin-deps --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
