@@ -56,23 +56,23 @@ function tracker_get_context($cmid, $instanceid) {
 
     if ($cmid) {
         if (! $cm = get_coursemodule_from_id('tracker', $cmid)) {
-            print_error('errorcoursemodid', 'tracker');
+            throw new moodle_exception('errorcoursemodid', 'tracker');
         }
         if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-            print_error('errorcoursemisconfigured', 'tracker');
+            throw new moodle_exception('errorcoursemisconfigured', 'tracker');
         }
         if (! $tracker = $DB->get_record('tracker', array('id' => $cm->instance))) {
-            print_error('errormoduleincorrect', 'tracker');
+            throw new moodle_exception('errormoduleincorrect', 'tracker');
         }
     } else {
         if (! $tracker = $DB->get_record('tracker', array('id' => $instanceid))) {
-            print_error('errormoduleincorrect', 'tracker');
+            throw new moodle_exception('errormoduleincorrect', 'tracker');
         }
         if (! $course = $DB->get_record('course', array('id' => $tracker->course))) {
-            print_error('errorcoursemisconfigured', 'tracker');
+            throw new moodle_exception('errorcoursemisconfigured', 'tracker');
         }
         if (! $cm = get_coursemodule_from_instance("tracker", $tracker->id, $course->id)) {
-            print_error('errorcoursemodid', 'tracker');
+            throw new moodle_exception('errorcoursemodid', 'tracker');
         }
     }
 
@@ -690,7 +690,7 @@ function tracker_clearelements($issueid, $withfiles = false) {
     $attributeids = $DB->get_records('tracker_issueattribute', array('issueid' => $issueid), 'id', 'id,id');
 
     if (!$DB->delete_records('tracker_issueattribute', array('issueid' => $issueid))) {
-        print_error('errorcannotlearelementsforissue', 'tracker', $issueid);
+        throw new moodle_exception('errorcannotlearelementsforissue', 'tracker', $issueid);
     }
 
     // delete issue attribute fields

@@ -50,7 +50,7 @@ $PAGE->set_heading(format_string($tracker->name));
 $formname = '\\mod_tracker\\tracker_element_' . $type . '_form';
 
 if (!class_exists($formname)) {
-    print_error('Missing element form');
+    throw new moodle_exception('Missing element form');
 }
 
 $form = new $formname(new moodle_url('/mod/tracker/editelement.php'), array('id' => $id));

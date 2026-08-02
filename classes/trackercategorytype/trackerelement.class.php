@@ -199,7 +199,7 @@ abstract class trackerelement {
                 $this->maxorder = 0;
             }
         } else {
-            print_error('errorinvalidelementID', 'tracker');
+            throw new \moodle_exception('errorinvalidelementID', 'tracker');
         }
     }
     /**

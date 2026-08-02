@@ -290,7 +290,7 @@ class view_controller extends base_controller {
             $issueid = $this->data->issueid;
             $params = array('trackerid' => $this->tracker->id, 'issueid' => $issueid, 'userid' => $this->data->ccid);
             if (!$DB->delete_records ('tracker_issuecc', $params)) {
-                print_error('errorcannotdeletecc', 'tracker');
+                throw new \moodle_exception('errorcannotdeletecc', 'tracker');
             }
 
         } else if ($cmd == 'register') {
@@ -419,7 +419,7 @@ class view_controller extends base_controller {
                     try {
                         $DB->update_record('tracker_issue', $issue);
                     } catch (\Exception $e) {
-                        print_error('errorcannotupdateissuecascade', 'tracker');
+                        throw new \moodle_exception('errorcannotupdateissuecascade', 'tracker');
                     }
 
                     // Log state change.
@@ -432,10 +432,10 @@ class view_controller extends base_controller {
                     $stc->statusto = $issue->status;
                     $DB->insert_record('tracker_state_change', $stc);
                 } else {
-                    print_error('errorremote', 'tracker', '', implode('<br/>', $response->error));
+                    throw new \moodle_exception('errorremote', 'tracker', '', implode('<br/>', $response->error));
                 }
             } else {
-                print_error('errorremotesendingcascade', 'tracker', $this->tracker->parent);
+                throw new \moodle_exception('errorremotesendingcascade', 'tracker', $this->tracker->parent);
             }
 
         } else if ($cmd == 'distribute') {

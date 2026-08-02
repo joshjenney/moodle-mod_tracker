@@ -57,7 +57,7 @@ if ($form->is_cancelled()) {
 if ($data = $form->get_data()) {
 
     if (!$issue = tracker_submitanissue($tracker, $data)) {
-        print_error('errorcannotsubmitticket', 'tracker');
+        throw new moodle_exception('errorcannotsubmitticket', 'tracker');
     }
 
     $event = \mod_tracker\event\tracker_issuereported::create_from_issue($tracker, $issue->id);
