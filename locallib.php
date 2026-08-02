@@ -1080,8 +1080,17 @@ function tracker_notify_raiserequest($issue, &$cm, $reason, $urgent, $tracker = 
     // 4.1 and production, not only on 4.5. $context was already being built two
     // lines down; it is simply hoisted.
     $context = context_module::instance($cm->id);
-    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    // These records go straight to email_to_user(), which needs email, lang,
+    // emailstop, mailformat and the name fields. for_identity() returns none of
+    // those - identity fields exist to DISPLAY who a user is in a list, not to
+    // mail them - so notification failed with "Can not send email to user without
+    // email". Upstream's list, before the Moodle 4 edits, was:
+    //   'u.id,'.get_all_user_name_fields(true, 'u').',username,lang,email,emailstop,mailformat,mnethostid'
+    // get_all_user_name_fields() was REMOVED in Moodle 4.x. for_name()->get_sql()
+    // is its replacement and exists in both 4.1.5 and 4.5.12, so this line is
+    // identical on both branches. get_sql() emits a leading comma by default.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname', '', '', '', '', true);
 
@@ -1168,8 +1177,17 @@ function tracker_notify_submission($issue, &$cm, $tracker = null) {
     // nobody intended. Restored with the context argument it always required; see
     // the note in tracker_notify_raiserequest above.
     $context = context_module::instance($cm->id);
-    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    // These records go straight to email_to_user(), which needs email, lang,
+    // emailstop, mailformat and the name fields. for_identity() returns none of
+    // those - identity fields exist to DISPLAY who a user is in a list, not to
+    // mail them - so notification failed with "Can not send email to user without
+    // email". Upstream's list, before the Moodle 4 edits, was:
+    //   'u.id,'.get_all_user_name_fields(true, 'u').',username,lang,email,emailstop,mailformat,mnethostid'
+    // get_all_user_name_fields() was REMOVED in Moodle 4.x. for_name()->get_sql()
+    // is its replacement and exists in both 4.1.5 and 4.5.12, so this line is
+    // identical on both branches. get_sql() emits a leading comma by default.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
 
@@ -1234,12 +1252,16 @@ function tracker_notify_update($issue, &$cm, $tracker = null) {
         $tracker = $DB->get_record('tracker', array('id' => $issue->trackerid));
     }
     $cm = get_coursemodule_from_instance('tracker', $tracker->id);
-    $context = context_module::instance($cm->id);
+    // N2NCU 2026-08-01: this list had email and mnethostid but not lang, and
+    // $manager->lang is used below when compiling the mail template - so this
+    // path emitted "Undefined property: stdClass::$lang" on every notification.
+    // emailstop and mailformat were missing too; email_to_user() reads both.
+    // Same upstream list as the two functions above.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
-	// M4
-    $fields = \core_user\fields::for_name()->excluding('id')->including('mnethostid')->including('email')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
-
+    // N2NCU 2026-08-01: $context was assigned twice in a row here; the duplicate
+    // is removed.
     $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
 
