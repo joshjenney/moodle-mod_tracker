@@ -1076,11 +1076,21 @@ function tracker_notify_raiserequest($issue, &$cm, $reason, $urgent, $tracker = 
     // N2NCU 2026-08-01: for_identity() is declared for_identity(?context $context,
     // bool $allowcustom = true) - the context is nullable but has NO default, so
     // calling it with no arguments is an ArgumentCountError, not a null context.
-    // The signature is identical in 4.1.5 and 4.5.12, so this threw on both.
-    // $context was already being built two lines down; it is simply hoisted.
+    // The signature is identical in 4.1.5 and 4.5.12, so this has been throwing on
+    // 4.1 and production, not only on 4.5. $context was already being built two
+    // lines down; it is simply hoisted.
     $context = context_module::instance($cm->id);
-    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    // These records go straight to email_to_user(), which needs email, lang,
+    // emailstop, mailformat and the name fields. for_identity() returns none of
+    // those - identity fields exist to DISPLAY who a user is in a list, not to
+    // mail them - so notification failed with "Can not send email to user without
+    // email". Upstream's list, before the Moodle 4 edits, was:
+    //   'u.id,'.get_all_user_name_fields(true, 'u').',username,lang,email,emailstop,mailformat,mnethostid'
+    // get_all_user_name_fields() was REMOVED in Moodle 4.x. for_name()->get_sql()
+    // is its replacement and exists in both 4.1.5 and 4.5.12, so this line is
+    // identical on both branches. get_sql() emits a leading comma by default.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname', '', '', '', '', true);
 
@@ -1159,15 +1169,25 @@ function tracker_notify_submission($issue, &$cm, $tracker = null) {
         $tracker = $DB->get_record('tracker', array('id' => $issue->trackerid));
     }
 
-    // N2NCU 2026-08-01: same fix as in tracker_notify_raiserequest above - see the
-    // comment there. On the n2ncu-401 branch this line is commented out with a
-    // "N2NCU custom patch needed here" note and replaced by `$field = null;` -
-    // singular, a typo, which left $fields UNDEFINED for the call below. The 4.5
-    // port uncommented the real line without adding the context argument, which
-    // turned a silent undefined-variable warning into a fatal on reportissue.php.
+    // N2NCU 2026-08-01: this is the "custom patch needed here" the old comment
+    // asked for. The real call was commented out and replaced with `$field = null;`
+    // - singular, a typo - which left $fields UNDEFINED at the call below. PHP
+    // coerced the undefined value to '' and get_users_by_capability fell back to
+    // returning every user field, so it appeared to work while doing something
+    // nobody intended. Restored with the context argument it always required; see
+    // the note in tracker_notify_raiserequest above.
     $context = context_module::instance($cm->id);
-    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
+    // These records go straight to email_to_user(), which needs email, lang,
+    // emailstop, mailformat and the name fields. for_identity() returns none of
+    // those - identity fields exist to DISPLAY who a user is in a list, not to
+    // mail them - so notification failed with "Can not send email to user without
+    // email". Upstream's list, before the Moodle 4 edits, was:
+    //   'u.id,'.get_all_user_name_fields(true, 'u').',username,lang,email,emailstop,mailformat,mnethostid'
+    // get_all_user_name_fields() was REMOVED in Moodle 4.x. for_name()->get_sql()
+    // is its replacement and exists in both 4.1.5 and 4.5.12, so this line is
+    // identical on both branches. get_sql() emits a leading comma by default.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
 
@@ -1232,12 +1252,16 @@ function tracker_notify_update($issue, &$cm, $tracker = null) {
         $tracker = $DB->get_record('tracker', array('id' => $issue->trackerid));
     }
     $cm = get_coursemodule_from_instance('tracker', $tracker->id);
-    $context = context_module::instance($cm->id);
+    // N2NCU 2026-08-01: this list had email and mnethostid but not lang, and
+    // $manager->lang is used below when compiling the mail template - so this
+    // path emitted "Undefined property: stdClass::$lang" on every notification.
+    // emailstop and mailformat were missing too; email_to_user() reads both.
+    // Same upstream list as the two functions above.
+    $fields = 'u.id'.\core_user\fields::for_name()->get_sql('u')->selects.
+              ',u.username,u.lang,u.email,u.emailstop,u.mailformat,u.mnethostid';
 
-	// M4
-    $fields = \core_user\fields::for_name()->excluding('id')->including('mnethostid')->including('email')->get_required_fields();
-    $fields = 'u.id,'.implode(',', $fields);
-
+    // N2NCU 2026-08-01: $context was assigned twice in a row here; the duplicate
+    // is removed.
     $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
 
