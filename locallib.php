@@ -1073,11 +1073,15 @@ function tracker_notify_raiserequest($issue, &$cm, $reason, $urgent, $tracker = 
         $tracker = $DB->get_record('tracker', array('id' => $issue->trackerid));
     }
 
-	// M4
-    $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
+    // N2NCU 2026-08-01: for_identity() is declared for_identity(?context $context,
+    // bool $allowcustom = true) - the context is nullable but has NO default, so
+    // calling it with no arguments is an ArgumentCountError, not a null context.
+    // The signature is identical in 4.1.5 and 4.5.12, so this threw on both.
+    // $context was already being built two lines down; it is simply hoisted.
+    $context = context_module::instance($cm->id);
+    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
     $fields = 'u.id,'.implode(',', $fields);
 
-    $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname', '', '', '', '', true);
 
     $by = $DB->get_record('user', array('id' => $issue->reportedby));
@@ -1155,11 +1159,16 @@ function tracker_notify_submission($issue, &$cm, $tracker = null) {
         $tracker = $DB->get_record('tracker', array('id' => $issue->trackerid));
     }
 
-	// M4
-    $fields = \core_user\fields::for_identity()->excluding('id')->including('mnethostid')->get_required_fields();
+    // N2NCU 2026-08-01: same fix as in tracker_notify_raiserequest above - see the
+    // comment there. On the n2ncu-401 branch this line is commented out with a
+    // "N2NCU custom patch needed here" note and replaced by `$field = null;` -
+    // singular, a typo, which left $fields UNDEFINED for the call below. The 4.5
+    // port uncommented the real line without adding the context argument, which
+    // turned a silent undefined-variable warning into a fatal on reportissue.php.
+    $context = context_module::instance($cm->id);
+    $fields = \core_user\fields::for_identity($context)->excluding('id')->including('mnethostid')->get_required_fields();
     $fields = 'u.id,'.implode(',', $fields);
 
-    $context = context_module::instance($cm->id);
     $managers = get_users_by_capability($context, 'mod/tracker:manage', $fields, 'lastname');
 
     $by = $DB->get_record('user', array('id' => $issue->reportedby));
