@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/mod/tracker/lib.php');
 $id = required_param('id', PARAM_INT); // Course.
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
-    print_error('invalidcourseid');
+    throw new moodle_exception('invalidcourseid');
 }
 
 // Security.
