@@ -789,6 +789,6 @@ $string['update_html_tpl'] = '
 <p><b>See the ticket solution: </b><a href="<%%ISSUEURL%%>"><%%ISSUEURL%%></a></p>';
 
 $string['instructionslabel'] = 'Instructions';
-$string['instructionsdetails'] = '<p>If this is your first time submitting a help desk ticket, please watch the <a target="_blank" href="https://online.n2ncu.org/mod/page/view.php?id=1185"><b>student resource videos</b></a> and review the <a target="_blank" href="https://online.n2ncu.org/mod/page/view.php?id=1184"><b>commonly asked questions</b></a>. Thank you!</p>';
+$string['instructionsdetails'] = '<p>If this is your first time submitting a help desk ticket, please watch the <a target="_blank" href="{$a}/mod/page/view.php?id=1185"><b>student resource videos</b></a> and review the <a target="_blank" href="{$a}/mod/page/view.php?id=1184"><b>commonly asked questions</b></a>. Thank you!</p>';
 
 require(__DIR__.'/pro_additional_strings.php');
