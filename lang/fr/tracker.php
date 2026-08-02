@@ -784,6 +784,12 @@ $string['update_html_tpl'] = '
 ';
 
 $string['instructionslabel'] = 'Instructions';
-$string['instructionsdetails'] = "<p>Si c'est la première fois que vous soumettez une demande d'assistance, veuillez regarder les <a target='_blank' href='https://online.n2ncu.org/mod/page/view.php?id=1185'><b>vidéos de ressources pour les étudiants</b></a> et consulter la <a target='_blank' href='https://online.n2ncu.org/mod/page/view.php?id=1184'><b>foire aux questions</b></a>. Merci !</p>";
+// N2NCU 2026-08-02: the two links were hardcoded to the production host, so on a
+// sandbox a student clicking them landed on the live site. Now {$a}, which
+// reportissue_form.php fills with $CFG->wwwroot - on production that resolves to
+// exactly the old URLs. Note this string is DOUBLE quoted and the rest of this
+// file is single quoted: {$a} must be escaped here or PHP interpolates an
+// undefined $a before Moodle ever sees a placeholder.
+$string['instructionsdetails'] = "<p>Si c'est la première fois que vous soumettez une demande d'assistance, veuillez regarder les <a target='_blank' href='{\$a}/mod/page/view.php?id=1185'><b>vidéos de ressources pour les étudiants</b></a> et consulter la <a target='_blank' href='{\$a}/mod/page/view.php?id=1184'><b>foire aux questions</b></a>. Merci !</p>";
 
 require(__DIR__.'/pro_additional_strings.php');

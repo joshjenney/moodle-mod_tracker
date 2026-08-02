@@ -44,7 +44,7 @@ class TrackerIssueForm extends moodleform {
      * Dynamically defines the form using elements setup in tracker instance
      */
     public function definition() {
-        global $DB, $COURSE;
+        global $DB, $COURSE, $CFG;
 
         $tracker = $this->_customdata['tracker'];
 
@@ -74,7 +74,7 @@ class TrackerIssueForm extends moodleform {
 		    'static',					                    // element type
 		    'instructions',					                // unique element name
 		    get_string('instructionslabel', 'tracker'),	    // label string
-		    get_string('instructionsdetails', 'tracker'));	// HTML/text
+		    get_string('instructionsdetails', 'tracker', $CFG->wwwroot));	// HTML/text
 
         $mform->addElement('text', 'summary', get_string('summary', 'tracker'), array('size' => 80));
         $mform->setType('summary', PARAM_TEXT);
