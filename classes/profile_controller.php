@@ -77,7 +77,7 @@ class profile_controller extends base_controller {
             if (!$DB->delete_records('tracker_issuecc', array('trackerid' => $tracker->id, 'issueid' => $issueid, 'userid' => $ccid))) {
                 $e->issue = $tracker->ticketprefix.$issueid;
                 $e->userid = $ccid;
-                print_error('errorcannotdeletecarboncopyforuser', 'tracker', $e);
+                throw new \moodle_exception('errorcannotdeletecarboncopyforuser', 'tracker', $e);
             }
             $this->done = true;
 
@@ -91,7 +91,7 @@ class profile_controller extends base_controller {
             // Ask for editing the watchers configuration ************************************************.
             $ccid = optional_param('ccid', '', PARAM_INT);
             if (!$form = $DB->get_record('tracker_issuecc', array('id' => $ccid))) {
-                print_error('errorcannoteditwatch', 'tracker');
+                throw new \moodle_exception('errorcannoteditwatch', 'tracker');
             }
             $issue = $DB->get_record('tracker_issue', array('id' => $form->issueid));
             $form->summary = $issue->summary;

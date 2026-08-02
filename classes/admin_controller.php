@@ -177,7 +177,7 @@ class admin_controller extends base_controller {
             // Update an element ****************************************************************************.
             $this->out = '';
             if (empty($form->elementid)) {
-                print_error('errorelementdoesnotexist', 'tracker', $this->url);
+                throw new \moodle_exception('errorelementdoesnotexist', 'tracker', $this->url);
             }
             $errors = array();
             if (empty($this->data->name)) {
@@ -292,7 +292,7 @@ class admin_controller extends base_controller {
 
                 $this->done = true;
             } else {
-                print_error('errorcannotviewelementoption', 'tracker', $this->url);
+                throw new \moodle_exception('errorcannotviewelementoption', 'tracker', $this->url);
             }
             return -1;
         }
@@ -443,7 +443,7 @@ class admin_controller extends base_controller {
                 $this->done = true;
             } else {
                 // Feedback message that element is already in uses.
-                print_error('erroralreadyinuse', 'tracker', $this->url->out().'&view=admin');
+                throw new \moodle_exception('erroralreadyinuse', 'tracker', $this->url->out().'&view=admin');
             }
 
         } else if ($cmd == 'removeelement') {

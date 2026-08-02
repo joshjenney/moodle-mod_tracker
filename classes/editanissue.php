@@ -60,7 +60,7 @@ if ($data = $form->get_data()) {
     $issueid = $data->issueid;
 
     if (!$issue = tracker_submitanissue($tracker, $data)) {
-        print_error('errorcannotsubmitticket', 'tracker');
+        throw new moodle_exception('errorcannotsubmitticket', 'tracker');
     }
 
     $event = \mod_tracker\event\tracker_issuereported::create_from_issue($tracker, $issueid);
@@ -121,7 +121,7 @@ if ($data = $form->get_data()) {
     if (is_array($dependancies)) {
         // Cleanup previous depdendancies.
         if (!$DB->delete_records('tracker_issuedependancy', array('childid' => $issue->id))) {
-            print_error('errorcannotdeleteolddependancy', 'tracker');
+            throw new moodle_exception('errorcannotdeleteolddependancy', 'tracker');
         }
         // Install back new one.
         foreach ($dependancies as $dependancy) {
@@ -131,7 +131,7 @@ if ($data = $form->get_data()) {
             $dependancyrec->childid = $issue->id;
             $dependancyrec->comment = '';
             if (!$DB->insert_record('tracker_issuedependancy', $dependancyrec)) {
-                print_error('cannotwritedependancy', 'tracker');
+                throw new moodle_exception('cannotwritedependancy', 'tracker');
             }
         }
     }

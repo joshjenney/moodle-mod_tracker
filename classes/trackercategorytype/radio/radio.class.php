@@ -127,7 +127,7 @@ class radioelement extends trackerelement {
         if (!isset($attribute->id)) {
             $attribute->id = $DB->insert_record('tracker_issueattribute', $attribute);
             if (empty($attribute->id)) {
-                print_error('erroraddissueattribute', 'tracker', '', 2);
+                throw new \moodle_exception('erroraddissueattribute', 'tracker', '', 2);
             }
         } else {
             $DB->update_record('tracker_issueattribute', $attribute);

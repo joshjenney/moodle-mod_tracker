@@ -210,7 +210,7 @@ if ($view == 'view') {
                 // If user it trying to view an issue, check to see if user has privileges to view this issue.
                 $caps = array('mod/tracker:seeissues', 'mod/tracker:resolve', 'mod/tracker:develop', 'mod/tracker:manage');
                 if (!has_any_capability($caps, $context)) {
-                    print_error('errornoaccessissue', 'tracker');
+                    throw new moodle_exception('errornoaccessissue', 'tracker');
                 } else {
                     include($CFG->dirroot.'/mod/tracker/views/viewanissue.php');
                 }
@@ -220,7 +220,7 @@ if ($view == 'view') {
             case 'editanissue': {
                 $reporterid = $DB->get_field('tracker_issue', 'reportedby', array('id' => $issueid));
                 if (!has_capability('mod/tracker:manage', $context) && ($USER->id != $reporterid)) {
-                    print_error('errornoaccessissue', 'tracker');
+                    throw new moodle_exception('errornoaccessissue', 'tracker');
                 } else {
                     include($CFG->dirroot.'/mod/tracker/views/editanissue.php');
                 }
@@ -243,7 +243,7 @@ if ($view == 'view') {
 
             case 'browse':
                 if (!has_capability('mod/tracker:viewallissues', $context)) {
-                    // print_error('errornoaccessallissues', 'tracker');
+                    // throw new moodle_exception('errornoaccessallissues', 'tracker');
                     redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'mytickets')));
                 } else {
                     $resolved = 1;
@@ -319,7 +319,7 @@ if ($view == 'view') {
         }
     }
 } else {
-    print_error('errorfindingaction', 'tracker', $action);
+    throw new moodle_exception('errorfindingaction', 'tracker', $action);
 }
 
 echo $OUTPUT->box_end();
