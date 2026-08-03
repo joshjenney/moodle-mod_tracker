@@ -34,6 +34,19 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
     protected $lowest;
     protected $highest;
 
+    // N2NCU 2026-08-02: $colwidth was the one property this class used without
+    // declaring. Assigned at init() and read by six of the table renderers
+    // below, so PHP created it dynamically - "Creation of dynamic property
+    // mod_tracker_reports_renderer::$colwidth is deprecated" on every load of
+    // view.php?view=reports.
+    //
+    // Deprecated in PHP 8.2 and REMOVED in 9, so this is a future fatal on a
+    // page that works today, not a cosmetic notice.
+    //
+    // Found by tools/smoke-crawl.sh in moodle-core-patches - the first
+    // deprecation any crawl has surfaced, and only reachable as an admin.
+    protected $colwidth;
+
     public function init($tracker) {
 
         $this->tracker = $tracker;
