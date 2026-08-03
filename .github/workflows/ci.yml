@@ -47,13 +47,18 @@ jobs:
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
-      - name: Install local_vflibs dependency
-        run: |
-          git clone --depth=1 https://github.com/vfremaux/moodle-local_vflibs.git plugin-deps/local_vflibs
-
+      # N2NCU 2026-08-03: the local_vflibs clone step is gone, along with the
+      # --extra-plugins ./plugin-deps it fed. Nothing in this plugin calls into
+      # local_vflibs any more - the reports chart uses \core\chart_line - so the
+      # step was cloning 214MB per run to satisfy a dependency version.php no
+      # longer declares. --extra-plugins is dropped rather than left pointing at
+      # an empty plugin-deps, which moodle-plugin-ci treats as an error.
+      #
+      # Only on n2ncu-405. The 4.1 branch still declares the dependency because
+      # the chart port has not been carried across, so its CI still needs this.
       - name: Install moodle-plugin-ci
         run: |
-          moodle-plugin-ci install --plugin ./plugin --extra-plugins ./plugin-deps --db-host=127.0.0.1
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
