@@ -47,6 +47,23 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
     // deprecation any crawl has surfaced, and only reachable as an admin.
     protected $colwidth;
 
+    // N2NCU 2026-08-03: four more, found the same way $colwidth was and missed
+    // the first time round.
+    //
+    // The check that cleared this class looked for `$this->x =` assignments.
+    // These are assigned as ARRAY ELEMENTS - `$this->totalsum[$current] = ...`
+    // in progress_trends() - which creates the property just the same but does
+    // not match that pattern. The right test is every `$this->x` that is not
+    // followed by an opening bracket, compared against the declarations.
+    //
+    // They only surface on view=reports&screen=evolution. The default screen is
+    // status, which does not call progress_trends(), so neither the crawler nor
+    // a casual look at the reports page ever reached them.
+    protected $totalsum;
+    protected $trendsum;
+    protected $ressum;
+    protected $testsum;
+
     public function init($tracker) {
 
         $this->tracker = $tracker;
