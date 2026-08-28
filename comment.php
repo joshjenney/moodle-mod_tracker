@@ -40,7 +40,7 @@ require_course_login($course->id, false, $cm);
 require_capability('mod/tracker:comment', $context);
 
 if (!$issue = $DB->get_record('tracker_issue', array('id' => $issueid))) {
-    print_error('errorbadissueid', 'tracker');
+    throw new moodle_exception('errorbadissueid', 'tracker');
 }
 
 // Setting page.

@@ -27,13 +27,25 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2023060400;  // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2022041900;
+$plugin->version  = 2026072700;  // The current module version (Date: YYYYMMDDXX).
+$plugin->requires = 2022112800;  // Moodle 4.1 (Build: 20221128).
 $plugin->component = 'mod_tracker';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '4.0.0 (Build 2023060400)';
-$plugin->supported = [400, 401];
-$plugin->dependencies = array('local_vflibs' => 2016081100);
+$plugin->supported = [401, 405];
+
+// N2NCU 2026-08-03: the local_vflibs dependency is removed. It existed only for
+// jqplot charting in the reports view, which now uses \core\chart_line. That was
+// the last consumer of local_vflibs on this site, so the plugin can be
+// uninstalled - 214MB, 68MB of which is Windows .exe and .dll under xpdf.
+//
+// Deliberately NOT bumping $plugin->version: nothing here needs a database
+// upgrade, and a bump would make every environment run an upgrade step for a
+// change that is purely code. Moodle reads this file live for dependency checks,
+// so the uninstall is unblocked without one.
+//
+// See TECH_DEBT 6. The vendored tree itself was never touched, which was the
+// whole point - trimming it would have diverged from upstream forever.
 
 // Non Moodle attributes.
 $plugin->codeincrement = '4.0.0009';

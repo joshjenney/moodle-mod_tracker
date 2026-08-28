@@ -42,20 +42,6 @@ class tracker_baseevent extends \core\event\base {
         $this->data['objecttable'] = 'tracker';
     }
 
-    /**
-     * Legacy event data.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename = $this->other['modulename'];
-        $eventdata->name       = $this->other['name'];
-        $eventdata->cmid       = $this->objectid;
-        $eventdata->courseid   = $this->courseid;
-        $eventdata->userid     = $this->userid;
-        return $eventdata;
-    }
 
     /**
      * custom validations

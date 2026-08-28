@@ -1,0 +1,39 @@
+# Line endings.
+#
+# This repo mirrors a Linux server, so the bytes in the blob must equal the bytes
+# deployed - tools/verify-deploy.sh compares them by md5. That was previously
+# achieved with "* -text", which tells git to do NO conversion at all.
+#
+# The problem with "* -text" is that it also means git never NORMALISES anything.
+# A file's line endings stay whatever they were when first committed, and an edit
+# made on Windows commits CRLF silently. On 2026-08-01 that turned a 20-line
+# change into a 195-line diff, and twice made a stale deployment look like it had
+# drifted when the only difference was carriage returns.
+#
+# "text=auto eol=lf" is strictly better here: the blob is LF, and a checkout on
+# Linux writes LF - so deployed bytes still equal blob bytes and the md5 check
+# still holds - while anything edited on Windows is normalised on commit instead
+# of poisoning every future diff of that file.
+* text=auto eol=lf
+
+# Never convert these. text=auto guesses from content and is usually right, but a
+# wrong guess corrupts a binary silently, so the common types are declared.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svgz  binary
+*.pdf   binary
+*.zip   binary
+*.gz    binary
+*.mp4   binary
+*.swf   binary
+*.z     binary
+*.dat   binary
+*.eot   binary
+*.otf   binary
+*.ttf   binary
+*.woff  binary
+*.woff2 binary
+*.phar  binary

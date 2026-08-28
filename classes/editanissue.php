@@ -45,14 +45,14 @@ $params = array('tracker' => $tracker,
                 'screen' => 'editanissue');
 $urlparams = array('view' => 'view',
                     'screen' => 'editanissue');
-$form = new TrackerIssueForm(new moodle_url('/mod/tracker/view.php', $urlparams), $params);
+$form = new TrackerIssueForm(new \moodle_url('/mod/tracker/view.php', $urlparams), $params);
 
 if ($form->is_cancelled()) {
     $params = array('id' => $cm->id,
                     'view' => 'view',
                     'screen' => 'viewanissue',
                     'issueid' => $issue->id);
-    redirect(new moodle_url('/mod/tracker/view.php', $params));
+    redirect(new \moodle_url('/mod/tracker/view.php', $params));
 }
 
 if ($data = $form->get_data()) {
@@ -60,7 +60,7 @@ if ($data = $form->get_data()) {
     $issueid = $data->issueid;
 
     if (!$issue = tracker_submitanissue($tracker, $data)) {
-        print_error('errorcannotsubmitticket', 'tracker');
+        throw new moodle_exception('errorcannotsubmitticket', 'tracker');
     }
 
     $event = \mod_tracker\event\tracker_issuereported::create_from_issue($tracker, $issueid);
@@ -81,7 +81,7 @@ if ($data = $form->get_data()) {
     }
 
     // Log state change.
-    $stc = new StdClass;
+    $stc = new \StdClass;
     $stc->userid = $USER->id;
     $stc->issueid = $issueid;
     $stc->trackerid = $tracker->id;
@@ -121,17 +121,17 @@ if ($data = $form->get_data()) {
     if (is_array($dependancies)) {
         // Cleanup previous depdendancies.
         if (!$DB->delete_records('tracker_issuedependancy', array('childid' => $issue->id))) {
-            print_error('errorcannotdeleteolddependancy', 'tracker');
+            throw new moodle_exception('errorcannotdeleteolddependancy', 'tracker');
         }
         // Install back new one.
         foreach ($dependancies as $dependancy) {
-            $dependancyrec = new StdClass;
+            $dependancyrec = new \StdClass;
             $dependancyrec->trackerid = $tracker->id;
             $dependancyrec->parentid = $dependancy;
             $dependancyrec->childid = $issue->id;
             $dependancyrec->comment = '';
             if (!$DB->insert_record('tracker_issuedependancy', $dependancyrec)) {
-                print_error('cannotwritedependancy', 'tracker');
+                throw new moodle_exception('cannotwritedependancy', 'tracker');
             }
         }
     }
@@ -140,7 +140,7 @@ if ($data = $form->get_data()) {
                     'view' => 'view',
                     'screen' => 'viewanissue',
                     'issueid' => $issue->id);
-    redirect(new moodle_url('/mod/tracker/view.php', $params));
+    redirect(new \moodle_url('/mod/tracker/view.php', $params));
 }
 
 // Start screen.

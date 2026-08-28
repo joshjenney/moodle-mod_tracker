@@ -34,6 +34,36 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
     protected $lowest;
     protected $highest;
 
+    // N2NCU 2026-08-02: $colwidth was the one property this class used without
+    // declaring. Assigned in init() and read by six of the table renderers
+    // below, so PHP created it dynamically - "Creation of dynamic property
+    // mod_tracker_reports_renderer::$colwidth is deprecated" on every load of
+    // view.php?view=reports.
+    //
+    // Deprecated in PHP 8.2 and REMOVED in 9, so this is a future fatal on a
+    // page that works today, not a cosmetic notice. This branch runs on 8.3.
+    //
+    // Found by tools/smoke-crawl.sh in moodle-core-patches - the first
+    // deprecation any crawl has surfaced, and only reachable as an admin.
+    protected $colwidth;
+
+    // N2NCU 2026-08-03: four more, found the same way $colwidth was and missed
+    // the first time round.
+    //
+    // The check that cleared this class looked for `$this->x =` assignments.
+    // These are assigned as ARRAY ELEMENTS - `$this->totalsum[$current] = ...`
+    // in progress_trends() - which creates the property just the same but does
+    // not match that pattern. The right test is every `$this->x` that is not
+    // followed by an opening bracket, compared against the declarations.
+    //
+    // They only surface on view=reports&screen=evolution. The default screen is
+    // status, which does not call progress_trends(), so neither the crawler nor
+    // a casual look at the reports page ever reached them.
+    protected $totalsum;
+    protected $trendsum;
+    protected $ressum;
+    protected $testsum;
+
     public function init($tracker) {
 
         $this->tracker = $tracker;
@@ -54,7 +84,7 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
                 $this->lowest = $availdates[0];
 
                 $this->highest = $availdates[count($availdates) - 1];
-                $low = new StdClass();
+                $low = new \StdClass();
                 list($low->year, $low->month) = explode('-', $this->lowest);
             }
 
@@ -94,55 +124,70 @@ class mod_tracker_reports_renderer extends \plugin_renderer_base {
 
         $str .= $this->progress_trends();
 
+        // N2NCU 2026-08-03: was local_vflibs_jqplot_print_graph(). Moodle has
+        // shipped a charting API since 3.2, so the chart is now built with
+        // \core\chart_line and rendered by core.
+        //
+        // The point is not the chart. local_vflibs is 214MB - 68MB of it Windows
+        // .exe and .dll under xpdf - and mod_tracker was its only consumer on
+        // this site, through exactly three lines: this call, the
+        // local_vflibs_require_jqplot_libs() in view.php, and the dependency in
+        // version.php. With all three gone the plugin uninstalls entirely,
+        // without trimming a single vendored file (see TECH_DEBT 6).
+        //
+        // Same three series, same colours, same axis labels. Core renders via
+        // Chart.js rather than jqplot, so it will not look identical.
+        $labels = array();
+        $active = array();
+        $intest = array();
+        $resolved = array();
         foreach ($this->totalsum as $k => $v) {
-            $data[0][] = array($k, $this->trendsum[$k]);
-            $data[1][] = array($k, $this->testsum[$k]);
-            $data[2][] = array($k, $this->ressum[$k]);
+            $labels[] = $k;
+            $active[] = (int)$this->trendsum[$k];
+            $intest[] = (int)$this->testsum[$k];
+            $resolved[] = (int)$this->ressum[$k];
         }
-        $jqplot = array(
-            'title' => array(
-                'text' => get_string('generaltrend', 'tracker'),
-                'fontSize' => '1.3em',
-                'color' => '#000080',
-                ),
-            'legend' => array(
-                'show' => true,
-                'location' => 'e',
-                'placement' => 'outsideGrid',
-                'showSwatch' => true,
-                'marginLeft' => '10px',
-                'border' => '1px solid #808080',
-                'labels' => array(get_string('activeplural', 'tracker'),
-                                  get_string('intest', 'tracker'),
-                                  get_string('resolvedplural2', 'tracker')),
-            ),
-            'axesDefaults' => array('labelRenderer' => '$.jqplot.CanvasAxisLabelRenderer'),
-            'axes' => array(
-                'xaxis' => array(
-                    'label' => get_string('month', 'tracker'),
-                    'renderer' => '$.jqplot.CategoryAxisRenderer',
-                    'pad' => 0
-                    ),
-                'yaxis' => array(
-                    'autoscale' => true,
-                    'tickOptions' => array('formatString' => '%2d'),
-                    'rendererOptions' => array('forceTickAt0' => true),
-                    'label' => get_string('tickets', 'tracker'),
-                    'labelRenderer' => '$.jqplot.CanvasAxisLabelRenderer',
-                    'labelOptions' => array('angle' => 90)
-                    )
-                ),
-            'series' => array(
-                array('color' => '#C00000'),
-                array('color' => '#80FF80'),
-                array('color' => '#00C000'),
-            ),
-        );
-        local_vflibs_jqplot_print_graph('plot1', $jqplot, $data, 550, 250, 'margin-top:20px;');
+
+        $chart = new \core\chart_line();
+        $chart->set_title(get_string('generaltrend', 'tracker'));
+        $chart->set_labels($labels);
+
+        $activeseries = new \core\chart_series(get_string('activeplural', 'tracker'), $active);
+        $activeseries->set_color('#C00000');
+        $chart->add_series($activeseries);
+
+        $intestseries = new \core\chart_series(get_string('intest', 'tracker'), $intest);
+        $intestseries->set_color('#80FF80');
+        $chart->add_series($intestseries);
+
+        $resolvedseries = new \core\chart_series(get_string('resolvedplural2', 'tracker'), $resolved);
+        $resolvedseries->set_color('#00C000');
+        $chart->add_series($resolvedseries);
+
+        $chart->get_xaxis(0, true)->set_label(get_string('month', 'tracker'));
+        $yaxis = $chart->get_yaxis(0, true);
+        $yaxis->set_label(get_string('tickets', 'tracker'));
+        $yaxis->set_stepsize(1);
+
+        // Appended rather than echoed. jqplot printed straight to output, which
+        // is why the graph appeared even though everything else here did not -
+        // see the return below.
+        $str .= $this->output->render_chart($chart, false);
 
         $str .= '</td>';
         $str .= '</tr>';
         $str .= '</table>';
+
+        // N2NCU 2026-08-03: this function never returned $str. report/evolution.php
+        // does `echo $renderer->evolution($alltickets);`, so it echoed null - the
+        // heading, both count_by_month tables and progress_trends() were built and
+        // silently discarded on every load. Only the graph showed, because the
+        // jqplot call echoed directly rather than appending.
+        //
+        // So fixing this makes content appear that has never been visible. That is
+        // the intended output of the function, but it IS a change worth looking at
+        // rather than assuming.
+        return $str;
     }
 
     public function count_by_month($isactive, $tickets) {

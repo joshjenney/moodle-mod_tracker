@@ -22,7 +22,7 @@
         <FIELD NAME="subtrackers" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="0" SEQUENCE="false" />
         <FIELD NAME="enabledstates" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="511" SEQUENCE="false" />
         <FIELD NAME="thanksmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" />
-        <FIELD NAME="strictworkflow" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" />
+        <FIELD NAME="strictworkflow" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="networkable" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" DEFAULT="0" />
       </FIELDS>
       <KEYS>
@@ -105,7 +105,7 @@
         <FIELD NAME="trackerid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" />
         <FIELD NAME="issueid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
         <FIELD NAME="elementid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
-        <FIELD NAME="elementitemid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="May be a list"/>
+        <FIELD NAME="elementitemid" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="May be a list - comma-separated elementitem ids, routinely longer than 255 chars"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
       </FIELDS>
       <KEYS>

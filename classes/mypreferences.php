@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/mod/tracker/forms/mypreferences_form.php');
 
 tracker_loadpreferences($tracker->id, $USER->id);
 
-$form = new my_preferences_form(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id)), array('tracker' => $tracker));
+$form = new my_preferences_form(new \moodle_url('/mod/tracker/view.php', array('id' => $cm->id)), array('tracker' => $tracker));
 
 if ($data = $form->get_data()) {
 
@@ -42,7 +42,7 @@ if ($data = $form->get_data()) {
     $resolved = $data->resolved;
     $abandonned = $data->abandonned;
     $oncomment = $data->oncomment;
-    $pref = new StdClass();
+    $pref = new \StdClass();
     $pref->trackerid = $tracker->id;
     $pref->userid = $USER->id;
     $pref->name = 'eventmask';

@@ -25,8 +25,6 @@
  */
 namespace mod_tracker;
 
-use context_module;
-use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -95,7 +93,7 @@ abstract class trackerelement {
             $this->paramchar2 = $elmrec->paramchar2;
         }
 
-        $this->context = context_module::instance($cm->id);
+        $this->context = \context_module::instance($cm->id);
         $this->options = null;
         $this->value = null;
         $this->tracker = $tracker;
@@ -110,7 +108,7 @@ abstract class trackerelement {
             return $this->$method();
         }
         if (!isset($this->$key)) {
-            throw new moodle_exception('No such field '.$key.' in tracker element');
+            throw new \moodle_exception('No such field '.$key.' in tracker element');
         }
         return $this->$key;
     }
@@ -124,7 +122,7 @@ abstract class trackerelement {
             $this->$method($value);
         }
         if (!isset($this->$key)) {
-            throw new moodle_exception('No such field '.$key.' in tracker element');
+            throw new \moodle_exception('No such field '.$key.' in tracker element');
         }
         $this->$key = $value;
     }
@@ -201,7 +199,7 @@ abstract class trackerelement {
                 $this->maxorder = 0;
             }
         } else {
-            print_error('errorinvalidelementID', 'tracker');
+            throw new \moodle_exception('errorinvalidelementID', 'tracker');
         }
     }
     /**
@@ -275,12 +273,12 @@ abstract class trackerelement {
         $this->get_value($issueid);
         $str = '';
         $attrs = array('type' => 'hidden', 'name' => 'element'.$this->name, 'value' => format_string($this->value));
-        $str .= html_writer::empty_tag('input', $attrs);
+        $str .= \html_writer::empty_tag('input', $attrs);
         $attrs = array('type' => 'text',
                        'name' => 'element'.$this->name.'_disabled',
                        'value' => format_string($this->value),
                        'disabled' => 'disabled', 'size' => 120);
-        $str .= html_writer::empty_tag('input', $attrs);
+        $str .= \html_writer::empty_tag('input', $attrs);
         return $str;
     }
 

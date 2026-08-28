@@ -96,9 +96,11 @@ $strtracker  = get_string('modulename', 'tracker');
 // Pre requisistes before output.
 
 if ($view == 'reports') {
-    require_once($CFG->dirroot.'/local/vflibs/jqplotlib.php');
+    // N2NCU 2026-08-03: the jqplotlib require and local_vflibs_require_jqplot_libs()
+    // are gone. The reports renderer now builds its chart with \core\chart_line,
+    // which core renders itself, so no charting library needs loading here.
+    // See TECH_DEBT 6 - this was one of only three references to local_vflibs.
     require_once($CFG->dirroot.'/mod/tracker/classes/output/mod_tracker_reports_renderer.php');
-    local_vflibs_require_jqplot_libs();
 }
 if ($view == 'admin') {
     require_once($CFG->dirroot.'/mod/tracker/classes/output/mod_tracker_admin_renderer.php');
@@ -210,7 +212,7 @@ if ($view == 'view') {
                 // If user it trying to view an issue, check to see if user has privileges to view this issue.
                 $caps = array('mod/tracker:seeissues', 'mod/tracker:resolve', 'mod/tracker:develop', 'mod/tracker:manage');
                 if (!has_any_capability($caps, $context)) {
-                    print_error('errornoaccessissue', 'tracker');
+                    throw new moodle_exception('errornoaccessissue', 'tracker');
                 } else {
                     include($CFG->dirroot.'/mod/tracker/views/viewanissue.php');
                 }
@@ -220,7 +222,7 @@ if ($view == 'view') {
             case 'editanissue': {
                 $reporterid = $DB->get_field('tracker_issue', 'reportedby', array('id' => $issueid));
                 if (!has_capability('mod/tracker:manage', $context) && ($USER->id != $reporterid)) {
-                    print_error('errornoaccessissue', 'tracker');
+                    throw new moodle_exception('errornoaccessissue', 'tracker');
                 } else {
                     include($CFG->dirroot.'/mod/tracker/views/editanissue.php');
                 }
@@ -243,7 +245,7 @@ if ($view == 'view') {
 
             case 'browse':
                 if (!has_capability('mod/tracker:viewallissues', $context)) {
-                    // print_error('errornoaccessallissues', 'tracker');
+                    // throw new moodle_exception('errornoaccessallissues', 'tracker');
                     redirect(new moodle_url('/mod/tracker/view.php', array('id' => $cm->id, 'view' => 'view', 'screen' => 'mytickets')));
                 } else {
                     $resolved = 1;
@@ -319,7 +321,7 @@ if ($view == 'view') {
         }
     }
 } else {
-    print_error('errorfindingaction', 'tracker', $action);
+    throw new moodle_exception('errorfindingaction', 'tracker', $action);
 }
 
 echo $OUTPUT->box_end();

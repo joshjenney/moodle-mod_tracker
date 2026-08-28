@@ -45,7 +45,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
      */
     public function admin_table() {
 
-        $template = new StdClass;
+        $template = new \StdClass;
         $template->elementused = $this->admin_elements_used();
         $template->elements = $this->admin_elements();
 
@@ -59,7 +59,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
         global $DB;
 
         if (empty($this->tracker)) {
-            throw new moodle_exception('Admin renderer not initialized');
+            throw new \moodle_exception('Admin renderer not initialized');
         }
 
         $str = $this->output->box_start('generalbox', 'description');
@@ -73,7 +73,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
         $typestr = get_string('type', 'tracker');
         $cmdstr = get_string('action', 'tracker');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head = array("<b>$orderstr</b>", "<b>$namestr</b>", "<b>$typestr</b>", "<b>$cmdstr</b>");
         $table->width = '100%';
         $table->size = array(20, 250, 50, 100);
@@ -88,7 +88,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                     'view' => 'admin',
                                     'what' => 'raiseelement',
                                     'elementid' => $element->id);
-                    $url = new moodle_url('/mod/tracker/view.php', $params);
+                    $url = new \moodle_url('/mod/tracker/view.php', $params);
                     $actions = '&nbsp;<a href="'.$url.'">'.$this->output->pix_icon('/t/up', '', 'core').'</a>';
                 } else {
                     $actions = '&nbsp;'.$this->output->pix_icon('up_shadow', '', 'mod_tracker');
@@ -99,7 +99,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                     'view' => 'admin',
                                     'what' => 'lowerelement',
                                     'elementid' => $element->id);
-                    $url = new moodle_url('/mod/tracker/view.php', $params);
+                    $url = new \moodle_url('/mod/tracker/view.php', $params);
                     $pix = $this->output->pix_icon('/t/down', '', 'core');
                     $actions .= '&nbsp;<a href="'.$url.'">'.$pix.'</a>';
                 } else {
@@ -112,7 +112,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'elementid' => $element->id,
                                 'used' => 1,
                                 'type' => $element->type);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $actions .= '&nbsp;<a href="'.$url.'">'.$this->output->pix_icon('/t/edit', '', 'core').'</a>';
 
                 if ($element->type_has_options()) {
@@ -120,7 +120,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                     'view' => 'admin',
                                     'what' => 'viewelementoptions',
                                     'elementid' => $element->id);
-                    $url = new moodle_url('/mod/tracker/view.php', $params);
+                    $url = new \moodle_url('/mod/tracker/view.php', $params);
                     $pix = $this->output->pix_icon('editoptions', '', 'mod_tracker');
                     $actions .= '&nbsp;<a href="'.$url.'" title="'.get_string('editoptions', 'mod_tracker').'">'.$pix.'</a>';
                 }
@@ -129,7 +129,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'view' => 'admin',
                                 'what' => 'removeelement',
                                 'usedid' => $element->id);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $actions .= '&nbsp;<a href="'.$url.'">'.$this->output->pix_icon('/t/right', '', 'core').'</a>';
 
                 if (!$element->mandatory) {
@@ -138,7 +138,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                         'view' => 'admin',
                                         'what' => 'setinactive',
                                         'usedid' => $element->id);
-                        $url = new moodle_url('/mod/tracker/view.php', $params);
+                        $url = new \moodle_url('/mod/tracker/view.php', $params);
                         $pix = $this->output->pix_icon('/t/hide', '', 'core');
                         $actions .= '&nbsp;<a href="'.$url.'" title="'.get_string('setinactive', 'tracker').'">'.$pix.'</a>';
                     } else {
@@ -146,7 +146,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                         'view' => 'admin',
                                         'what' => 'setactive',
                                         'usedid' => $element->id);
-                        $url = new moodle_url('/mod/tracker/view.php', $params);
+                        $url = new \moodle_url('/mod/tracker/view.php', $params);
                         $pix = $this->output->pix_icon('/t/show', '', 'core');
                         $actions .= '&nbsp;<a href="'.$url.'" title="'.get_string('setactive', 'tracker').'">'.$pix.'</a>';
                     }
@@ -169,7 +169,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setnotmandatory',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setnotmandatory', 'tracker');
                             $pix = $this->output->pix_icon('notempty', $alt, 'tracker');
                             $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -178,7 +178,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setmandatory',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setmandatory', 'tracker');
                             $pix = $this->output->pix_icon('empty', $alt, 'tracker');
                             $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -201,7 +201,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setpublic',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setpublic', 'tracker');
                             $actions .= '&nbsp;'.$this->output->pix_icon('t/locked', $alt, 'core');
                         } else {
@@ -209,7 +209,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setprivate',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setprivate', 'tracker');
                             $pix = $this->output->pix_icon('t/lock', $alt, 'core');
                             $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -236,7 +236,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setnotlistable',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setnotlistable', 'tracker');
                             $pix = $this->output->pix_icon('listed', $alt, 'tracker');
                             $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -245,7 +245,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                             'view' => 'admin',
                                             'what' => 'setlistable',
                                             'usedid' => $element->id);
-                            $url = new moodle_url('/mod/tracker/view.php', $params);
+                            $url = new \moodle_url('/mod/tracker/view.php', $params);
                             $alt = get_string('setlistable', 'tracker');
                             $pix = $this->output->pix_icon('unlisted', $alt, 'tracker');
                             $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -258,7 +258,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
 
                 $table->data[] = array($element->sortorder, $description, $icontype, $actions);
             }
-            $str .= html_writer::table($table);
+            $str .= \html_writer::table($table);
         } else {
             $str .= '<center>';
             $str .= get_string('noelements', 'tracker');
@@ -274,7 +274,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
         global $COURSE;
 
         if (empty($this->tracker)) {
-            throw new moodle_exception('Admin renderer not initialized');
+            throw new \moodle_exception('Admin renderer not initialized');
         }
 
         $str = '';
@@ -294,7 +294,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
         $cmdstr = get_string('action', 'tracker');
 
         unset($table);
-        $table = new html_table();
+        $table = new \html_table();
         $table->head = array("<b>$cmdstr</b>", "<b>$namestr</b>", "<b>$localstr</b>", "<b>$typestr</b>");
         $table->width = '100%';
         $table->size = array(100, 250, 50, 50);
@@ -327,7 +327,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'view' => 'admin',
                                 'what' => 'addelement',
                                 'elementid' => $element->id);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $alt = get_string('addtothetracker', 'tracker');
                 $pix = $this->output->pix_icon('t/moveleft', $alt, 'core');
                 $actions = '&nbsp;<a href="'.$url.'" title="'.$alt.'" >'.$pix.'</a>';
@@ -337,7 +337,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                     'view' => 'admin',
                                     'what' => 'viewelementoptions',
                                     'elementid' => $element->id);
-                    $url = new moodle_url('/mod/tracker/view.php', $params);
+                    $url = new \moodle_url('/mod/tracker/view.php', $params);
                     $alt = get_string('editoptions', 'tracker');
                     $pix = $this->output->pix_icon('editoptions', $alt, 'mod_tracker');
                     $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -348,7 +348,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'what' => 'editelement',
                                 'elementid' => $element->id,
                                 'type' => $element->type);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $alt = get_string('editproperties', 'tracker');
                 $pix = $this->output->pix_icon('t/edit', $alt, 'core');
                 $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -357,7 +357,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'view' => 'admin',
                                 'what' => 'deleteelement',
                                 'elementid' => $element->id);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $alt = get_string('delete');
                 $pix = $this->output->pix_icon('t/delete', $alt, 'core');
                 $actions .= '&nbsp;<a href="'.$url.'" title="'.$alt.'">'.$pix.'</a>';
@@ -369,7 +369,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                 $type = $this->output->pix_icon("types/{$element->type}", '', 'mod_tracker');
                 $table->data[] = array($actions, $name, $local, $type);
             }
-            $str .= html_writer::table($table);
+            $str .= \html_writer::table($table);
         } else {
             $str .= '<center>';
             $str .= get_string('noelements', 'tracker');
@@ -382,16 +382,16 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
 
     public function admin_elements_form() {
 
-        $template = new StdClass;
+        $template = new \StdClass;
 
-        $template->formurl = new moodle_url('/mod/tracker/view.php');
+        $template->formurl = new \moodle_url('/mod/tracker/view.php');
         $template->cmid = $this->cm->id;
         $types = tracker_getelementtypes();
         foreach ($types as $type) {
             $elementtypesmenu[$type] = get_string($type, 'tracker');
         }
         $attrs = array('onchange' => 'document.forms[\'addelement\'].submit();');
-        $template->typeselect = html_writer::select($elementtypesmenu, 'type', '', array('' => 'choose'), $attrs);
+        $template->typeselect = \html_writer::select($elementtypesmenu, 'type', '', array('' => 'choose'), $attrs);
 
         return $this->output->render_from_template('mod_tracker/adminelementform', $template);
     }
@@ -400,7 +400,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
 
         $str = $this->output->box_start('generalbox', 'bugreport');
 
-        $summarytable = new html_table();
+        $summarytable = new \html_table();
         $summarytable->head = array('', '');
         $summarytable->width = '90%';
         $summarytable->size = array('30%', '70%');
@@ -430,7 +430,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
                                 'what' => 'editelement',
                                 'elementid' => $element->id,
                                 'type' => $element->type);
-                $url = new moodle_url('/mod/tracker/view.php', $params);
+                $url = new \moodle_url('/mod/tracker/view.php', $params);
                 $tmp .= '<a href="'.$url.'">';
                 $tmp .= format_string($element->description);
                 $tmp .= '</a>';
@@ -503,7 +503,7 @@ class mod_tracker_admin_renderer extends \plugin_renderer_base {
         $row = array(get_string('potentialresolvers', 'tracker'), $tmp);
         $summarytable->data[] = $row;
 
-        $str .= html_writer::table($summarytable);
+        $str .= \html_writer::table($summarytable);
 
         $str .= $this->output->box_end();
 
