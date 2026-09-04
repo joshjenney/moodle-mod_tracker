@@ -224,7 +224,7 @@ if ($view == 'view') {
                 if (!has_capability('mod/tracker:manage', $context) && ($USER->id != $reporterid)) {
                     throw new moodle_exception('errornoaccessissue', 'tracker');
                 } else {
-                    include($CFG->dirroot.'/mod/tracker/views/editanissue.php');
+                    include($CFG->dirroot.'/mod/tracker/classes/editanissue.php');
                 }
                 break;
             }
@@ -306,12 +306,12 @@ if ($view == 'view') {
         switch ($screen) {
 
             case 'mypreferences': {
-                include($CFG->dirroot.'/mod/tracker/views/mypreferences.php');
+                include($CFG->dirroot.'/mod/tracker/classes/mypreferences.php');
                 break;
             }
 
             case 'mywatches': {
-                include($CFG->dirroot.'/mod/tracker/views/mywatches.php');
+                include($CFG->dirroot.'/mod/tracker/classes/mywatches.php');
                 break;
             }
 
