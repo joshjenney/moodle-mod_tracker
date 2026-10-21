@@ -1085,7 +1085,7 @@ class mod_tracker_renderer extends plugin_renderer_base {
                                   $name,
                                   $selected = '',
                                   $nothing = array('' => 'choosedots'),
-                                  array $attributes = null,
+                                  ?array $attributes = null,
                                   $classprefix = '',
                                   $classvaluemapping = null) {
 
