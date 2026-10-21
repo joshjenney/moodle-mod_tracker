@@ -45,7 +45,7 @@ class mustache_sortby_helper {
      * @param Mustache_LambdaHelper $helper Used to render nested mustache variables.
      * @return string
      */
-    public function sortby($text, Mustache_LambdaHelper $helper) {
+    public function sortby($text, $helper) {
         global $PAGE;
 
         $text = trim($helper->render($text));

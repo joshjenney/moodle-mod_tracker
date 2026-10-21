@@ -1366,7 +1366,7 @@ class mod_tracker_renderer extends plugin_renderer_base {
         try {
             // Grab a copy of the existing helper to be restored later.
             $uniqidhelper = $this->mustache->getHelper('uniqid');
-        } catch (Mustache_Exception_UnknownHelperException $e) {
+        } catch (\Mustache\Exception\UnknownHelperException | \Mustache_Exception_UnknownHelperException $e) { // Moodle 5.x namespaced Mustache; the old name is for 4.x.
             // Helper doesn't exist.
             $uniqidhelper = null;
         }
@@ -1382,7 +1382,7 @@ class mod_tracker_renderer extends plugin_renderer_base {
             try {
                 $template = $this->mustache->loadTemplate($templatename);
                 $templatecache[$templatename] = $template;
-            } catch (Mustache_Exception_UnknownTemplateException $e) {
+            } catch (\Mustache\Exception\UnknownTemplateException | \Mustache_Exception_UnknownTemplateException $e) { // 5.x namespaced; old name for 4.x.
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }
         }
