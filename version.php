@@ -32,7 +32,7 @@ $plugin->requires = 2022112800;  // Moodle 4.1 (Build: 20221128).
 $plugin->component = 'mod_tracker';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '4.0.0 (Build 2023060400)';
-$plugin->supported = [401, 405];
+$plugin->supported = [401, 503];
 
 // N2NCU 2026-08-03: the local_vflibs dependency is removed. It existed only for
 // jqplot charting in the reports view, which now uses \core\chart_line. That was
